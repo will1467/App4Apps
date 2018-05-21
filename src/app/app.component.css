@@ -4,6 +4,21 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800');
 
+
+.input {
+  margin-left: 15%;
+}
+
+.formerror {
+  width: 100%;
+}
+
+.navbarcustom {
+  background-color: #20211a
+}
+
+
+
 body {
     font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
@@ -17,6 +32,8 @@ body {
     font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 700;
   }
+
+
   
   header.masthead {
     position: relative;
