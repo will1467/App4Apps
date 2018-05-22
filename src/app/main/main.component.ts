@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PostgreSqlService } from '../postgre-sql.service';
 
 @Component({
   selector: 'app-main',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MainComponent implements OnInit {
 
-  constructor() { }
+  constructor(private postgreSqlService : PostgreSqlService  ) { }
 
   ngOnInit() {
   }
