@@ -8,6 +8,8 @@ import { PostgreSqlService } from '../postgre-sql.service';
 })
 export class MainComponent implements OnInit {
 
+  ideas = null;
+
   constructor(private postgreSqlService : PostgreSqlService  ) { }
 
   ngOnInit() {

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { checkPasswordValidator } from '../shared/passwords-match.directive';
+import { PostgreSqlService } from '../postgre-sql.service';
 
 @Component({
   selector: 'app-register',
@@ -16,7 +17,7 @@ export class RegisterComponent implements OnInit {
   repeatedPassword = new FormControl("", Validators.required);
   email = new FormControl("", Validators.email);
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private postgreSqlService : PostgreSqlService) {
     this.form = fb.group({
       "firstName": this.firstName,
       "password" : this.password,
@@ -30,7 +31,9 @@ export class RegisterComponent implements OnInit {
 
   onSubmit(){
     console.log("onSubmit called");
+    console.log(this.form.value)
     this.form.reset();
+    // this.postgreSqlService
   }
 
   ngOnInit() {

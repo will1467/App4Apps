@@ -29,7 +29,8 @@
                     <input formControlName="email" type="email" class="form-control form-control-lg input" placeholder="Email" id= "email">
                     <div [hidden]="email.valid || email.pristine" class="alert alert-danger input formerror"> Address is invalid</div>
                     <br>
-                    <button type="submit" [disabled]="!form.valid" class="btn btn-block btn-lg btn-primary input">Register</button>
+                    <!-- [disabled]="!form.valid" -->
+                    <button type="submit"  class="btn btn-block btn-lg btn-primary input">Register</button>
               </div>
               <div class="col-12 col-md-3">
               </div>

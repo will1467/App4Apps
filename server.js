@@ -55,6 +55,12 @@ const Idea = sequelize.define('Idea', {
 const app = express()
 const bodyParser = require('body-parser');
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 
 
 app.use(bodyParser.json());
@@ -67,19 +73,17 @@ app.use("/dist", express.static(__dirname + "/dist"));
 
 app.get("/ideaget", function(req,res){
     Idea.all().then((ideas) => {
-        ideas.forEach( idea => {
-            console.log(JSON.stringify(idea))
-        })
+            res.send(JSON.stringify(ideas));
     })
 })
 
-app.get("/ideacreate", function(req,res){
+app.post("/ideacreate", function(req,res){
     Idea.create({
-        Title : "An Idea",
-        Description : "This is a very great idea, isn't it",
-        Author : "William"
-    }).then(() => {
-
+        Title : req.body.Title,
+        Description : req.body.Description,
+        Author : req.body.Author
+    }).then( user => {
+        res.send(JSON.stringify(user))
     })
 })
 
