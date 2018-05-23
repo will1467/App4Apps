@@ -12,17 +12,16 @@ import { Idea } from '../Idea';
 export class IdeaParentComponent implements OnInit {
 
   ideas = null;
-
   newIdea = new Idea("Title", "Description", "John Smith");
 
-  constructor(private postgreSqlService : PostgreSqlService  ) { }
+  constructor(private postgreSqlService : PostgreSqlService) { }
 
 
   ngOnInit() {
     this.postgreSqlService.getIdeas().subscribe(ideas => this.ideas = ideas);
-    this.postgreSqlService.addIdea(this.newIdea).subscribe( idea => {
-    this.ideas.push(idea)
-    })
+    // this.postgreSqlService.addIdea(this.newIdea).subscribe( idea => {
+    // this.ideas.push(idea)
+    // })
   }
 
 }

@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
  
 import { Idea } from './Idea';
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Request-Method' : 'GET' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
 };
 
 
@@ -46,6 +46,28 @@ private handleError<T> (operation = 'operation', result?: T) {
   addIdea(idea : Idea) : Observable<Idea>{
     return this.http.post<Idea>(this.server + "/ideacreate", idea, httpOptions).pipe(
       catchError(this.handleError<Idea>('addIdea'))
+    )
+  }
+
+  register(username : string, password : string, email : string) : Observable<Object>{
+
+    var postOptions = {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
+    }
+
+    var newUser = {
+      Username : username,
+      Password : password,
+      Email : email
+    }
+    return this.http.post<Object>(this.server + "/usercreate", newUser, postOptions).pipe(
+      catchError(this.handleError<Object>('register'))
+    )
+  }
+
+  login(username : string, password : string){
+    return this.http.post<Object>(this.server + "/login", {Username : username, Password: password}, httpOptions).pipe(
+      catchError(this.handleError<Object>('login'))
     )
   }
 

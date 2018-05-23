@@ -8,15 +8,16 @@ import { RouterModule, Routes, Router } from '@angular/router';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
-import { MainComponent } from './main/main.component';
 import { IdeaParentComponent } from './idea-parent/idea-parent.component';
 import { IdeaChildComponent } from './idea-child/idea-child.component';
 import { PostgreSqlService } from './postgre-sql.service';
+import { AddIdeaComponent } from './add-idea/add-idea.component';
 
 const Routes = [
   {path: 'login', component : LoginComponent},
   {path : '', component: RegisterComponent},
-  {path: 'main', component: MainComponent}
+  {path: 'main', component: IdeaParentComponent},
+  {path: 'addIdea', component: AddIdeaComponent}
 ];
 
 
@@ -25,9 +26,9 @@ const Routes = [
     AppComponent,
     LoginComponent,
     RegisterComponent,
-    MainComponent,
     IdeaParentComponent,
-    IdeaChildComponent
+    IdeaChildComponent,
+    AddIdeaComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +38,7 @@ const Routes = [
     FormsModule,
     RouterModule.forRoot(
       Routes
-    )
+    ),
   ],
   providers: [PostgreSqlService],
   bootstrap: [AppComponent]

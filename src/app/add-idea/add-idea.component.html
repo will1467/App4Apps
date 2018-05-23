@@ -1,0 +1,33 @@
+      <!-- Navigation -->
+      <nav class="navbar navbar-light static-top navbarcustom">
+        <div class="container">
+          <a class="navbar-brand" href="#" style="color: white">Start Bootstrap</a>
+        </div>
+      </nav>
+
+      <!-- Masthead -->
+ <header class="masthead text-white text-center">
+  <div class="overlay"></div>
+  <div class="container">
+    <div class="row">
+      <div class="col-xl-9 mx-auto">
+        <h1 class="mb-5">Add a New Idea</h1>
+      </div>
+      <div class="col-xl-9 mx-auto">
+        <form [formGroup] = "form" (ngSubmit)="onSubmit()" >
+          <div class="form-row">
+              <div class="col-12 col-md-9 mb-2 mb-md-0">
+                    <input formControlName="title" type="text" class="form-control form-control-lg input" placeholder="Title" id= "name">
+                    <br>
+                    <input formControlName="description" type="text" class="form-control form-control-lg input" placeholder="Description" id= "password">
+                    <br>
+                    <button type="submit" class="btn btn-block btn-lg btn-primary input">Add</button>
+              </div>
+              <div class="col-12 col-md-3">
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</header>

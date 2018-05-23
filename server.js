@@ -50,17 +50,21 @@ const Idea = sequelize.define('Idea', {
     schema : 'AppForApps'
 })
 
+const _HASH = 8;
+
 
 //setup app
 const app = express()
 const bodyParser = require('body-parser');
 
 app.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Headers", "origin, X-Requested-With, content-type, accept, access-control-allow-origin");
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
   });
 
+  
 
 
 app.use(bodyParser.json());
@@ -87,17 +91,9 @@ app.post("/ideacreate", function(req,res){
     })
 })
 
-app.get("/userget", function(req, res) {
-    User.all().then((users) => {
-        users.forEach( user => {
-            console.log(JSON.stringify(user))
-        })
-    })
-})
-
 function cryptPassword(password){
     return new Promise(function(resolve, reject){
-            bCrypt.hash(password, 8, function(err, hash){
+            bCrypt.hash(password, _HASH, function(err, hash){
                 console.log("hashing");
                 if(err) return reject(err);
                 console.log("Hash:" + hash);
@@ -106,17 +102,36 @@ function cryptPassword(password){
         })
 }
 
-app.get("/usercreate", function(req, res){
-    console.log("usercreate called");
-    cryptPassword("password").then(password => {
+app.post("/usercreate", function(req, res){
+    cryptPassword(req.body.Password).then(password => {
         User.create({
-            UserName: 'William',
+            UserName: req.body.Username,
             Password : password,
-            Email : 'williamawrigley@gmail.com'
-        }).then(() => {
+            Email : req.body.Email
+        }).then(user => {
+            res.send(JSON.stringify(user))
         })
     }).catch(err => {
         if(err) console.log(err);
+    })
+})
+
+app.post("/login", function(req, response) {
+    User.findOne({ where : {UserName : req.body.Username }}).then(user => {
+        if(!user){
+            response.send(false)
+        } else {
+            var userDetails = user.get({plain: true});
+            bCrypt.compare(req.body.Password, userDetails.Password, function(err, res){
+                console.log("res : " + res);
+                if(res === true){
+                    response.send(true)
+                } else {
+                    response.send(false)
+                }
+            })
+
+        }
     })
 })
 
