@@ -19,9 +19,6 @@ export class IdeaParentComponent implements OnInit {
 
   ngOnInit() {
     this.postgreSqlService.getIdeas().subscribe(ideas => this.ideas = ideas);
-    // this.postgreSqlService.addIdea(this.newIdea).subscribe( idea => {
-    // this.ideas.push(idea)
-    // })
   }
 
 }
