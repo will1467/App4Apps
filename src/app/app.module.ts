@@ -16,7 +16,7 @@ import { AddIdeaComponent } from './add-idea/add-idea.component';
 const Routes = [
   {path: 'login', component : LoginComponent},
   {path : '', component: RegisterComponent},
-  {path: 'main', component: IdeaParentComponent},
+  {path: 'main', component: IdeaParentComponent, runGuardsAndResolvers: "always"},
   {path: 'addIdea', component: AddIdeaComponent}
 ];
 
@@ -37,7 +37,7 @@ const Routes = [
     ReactiveFormsModule,
     FormsModule,
     RouterModule.forRoot(
-      Routes
+      Routes, {onSameUrlNavigation : 'reload'}
     ),
   ],
   providers: [PostgreSqlService],

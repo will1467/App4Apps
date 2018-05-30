@@ -6,6 +6,9 @@ const express = require("express")
 const cors = require('cors');
 const Sequelize = require('sequelize');
 const bCrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const superNotSecretKey = "muchsecretmanywow";
 
 const sequelize = new Sequelize('AppForApps', 'postgres', 'root', {
     host : 'localhost',
@@ -94,22 +97,24 @@ app.post("/ideacreate", function(req,res){
 function cryptPassword(password){
     return new Promise(function(resolve, reject){
             bCrypt.hash(password, _HASH, function(err, hash){
-                console.log("hashing");
                 if(err) return reject(err);
-                console.log("Hash:" + hash);
                 return resolve(hash)
             })
         })
 }
 
 app.post("/usercreate", function(req, res){
+    console.log(req.body);
     cryptPassword(req.body.Password).then(password => {
         User.create({
-            UserName: req.body.Username,
+            UserName: req.body.UserName,
             Password : password,
             Email : req.body.Email
         }).then(user => {
-            res.send(JSON.stringify(user))
+            var token = jwt.sign({id : user.UserId}, superNotSecretKey, {
+                expiresIn : 86400
+            });
+            response.send({auth : true, token : token, user : userDetails.UserName,  userid : userDetails.UserId})
         })
     }).catch(err => {
         if(err) console.log(err);
@@ -119,19 +124,29 @@ app.post("/usercreate", function(req, res){
 app.post("/login", function(req, response) {
     User.findOne({ where : {UserName : req.body.Username }}).then(user => {
         if(!user){
-            response.send(false)
+            response.send({err : "User was not found"})
         } else {
             var userDetails = user.get({plain: true});
             bCrypt.compare(req.body.Password, userDetails.Password, function(err, res){
-                console.log("res : " + res);
                 if(res === true){
-                    response.send(true)
+                    var token = jwt.sign({id : userDetails.UserId}, superNotSecretKey, {
+                        expiresIn : 86400
+                    });
+                    response.send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
                 } else {
-                    response.send(false)
+                    response.send({err : "Password was incorrect"})
                 }
             })
 
         }
+    })
+})
+
+app.get('/authenticate', verifyToken, function(req, res, next){
+    User.findById(req.UserId, function(err, user){
+        if(err) return res.status(500).send("There was a problem finding the user.");
+        if(!user) return res.status(404).send("No user found");
+        res.send(user);
     })
 })
 
@@ -143,6 +158,18 @@ app.get("/userdelete", function(req, res){
             console.log("Not Found");
         }
 
+    })
+})
+
+app.post("/ideaDelete", function(req, res){
+    console.log(req.body.IdeaId);
+    Idea.find({where: {IdeaId : parseInt(req.body.IdeaId)}}).then(function(result) {
+        if(result){
+            result.destroy({force : true});
+            res.send(true)
+        } else {
+            res.send(false)
+        }
     })
 })
 
@@ -159,5 +186,21 @@ app.listen(8888, ()=>{
     testDBConnection();
     console.log("server started!");
 })
+
+function verifyToken(req,res,next) {
+    var token = req.headers['x-access-token'];
+    if(!token){
+        return res.status(403).send({auth : false, mssg : 'No token provided'})
+    }
+
+    jwt.verify(token, superNotSecretKey, function(err, decoded) {
+        if(err){
+            return res.status(500).send({auth : false, message : 'Failed to authenticate token'});
+        }
+        
+        req.userId = decoded.id;
+        next();
+    });
+}
 
 

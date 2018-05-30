@@ -1,4 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, EventEmitter, OnInit, Input } from '@angular/core';
+import { PostgreSqlService } from '../postgre-sql.service';
+import { Idea } from '../models/Idea';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-idea-child',
@@ -7,11 +10,21 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class IdeaChildComponent implements OnInit {
 
-  @Input() idea : string;
+  @Input() idea : Idea;
 
-  constructor() { }
+  constructor(private postgreSqlService : PostgreSqlService, private router : Router) { }
 
   ngOnInit() {
+  }
+
+  onDeleteIdeaClick(){
+    this.postgreSqlService.deleteIdea(this.idea).subscribe(success => {
+      if(success){
+        this.router.navigate(['main']);
+      } else {
+        console.log("Entry not found")
+      }
+    })
   }
 
 }

@@ -5,10 +5,15 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
  
-import { Idea } from './Idea';
+import { Idea } from './models/Idea';
+import { User } from './models/user';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
 };
+
+const postOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
+}
 
 
 
@@ -51,15 +56,7 @@ private handleError<T> (operation = 'operation', result?: T) {
 
   register(username : string, password : string, email : string) : Observable<Object>{
 
-    var postOptions = {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
-    }
-
-    var newUser = {
-      Username : username,
-      Password : password,
-      Email : email
-    }
+    var newUser = new User(username, password, email);
     return this.http.post<Object>(this.server + "/usercreate", newUser, postOptions).pipe(
       catchError(this.handleError<Object>('register'))
     )
@@ -70,5 +67,17 @@ private handleError<T> (operation = 'operation', result?: T) {
       catchError(this.handleError<Object>('login'))
     )
   }
+
+  deleteIdea(idea : Idea){
+    console.log(idea.IdeaId);
+    return this.http.post<Idea>(this.server + "/ideaDelete", idea, httpOptions).pipe(
+      catchError(this.handleError<Idea>('ideaDelete'))
+    )
+  }
+
+  // authenticate(token : string) : Observable<User>{
+  //   console.log(token);
+  //   return this.http.get<User>()
+  // }
 
 }

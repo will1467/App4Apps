@@ -24,8 +24,11 @@ export class LoginComponent implements OnInit {
 
   onSubmit(){
     this.postgreSqlService.login(this.form.value.firstName, this.form.value.password)
-    .subscribe( valid => {
-      if(valid){
+    .subscribe( response => {
+      if(response){
+        localStorage.setItem('token', response["token"])
+        localStorage.setItem('user', response["user"])
+        localStorage.setItem('userid', response["userid"])
         this.route.navigate(['main']);
         this.form.reset();
       } else {

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { IDEAS } from '../mock-ideas';
 import { PostgreSqlService } from '../postgre-sql.service';
 import { Idea } from '../Idea';
+import { Router, NavigationEnd } from '@angular/router';
 
 
 @Component({
@@ -12,13 +13,29 @@ import { Idea } from '../Idea';
 export class IdeaParentComponent implements OnInit {
 
   ideas = null;
-  newIdea = new Idea("Title", "Description", "John Smith");
+  navigationSubscription;
 
-  constructor(private postgreSqlService : PostgreSqlService) { }
+  constructor(private postgreSqlService : PostgreSqlService, private router : Router) {
+    this.navigationSubscription = this.router.events.subscribe((e : any) => {
+      if(e instanceof NavigationEnd) {
+        this.initialiseIdeas();
+      }
+    })
+   }
 
 
   ngOnInit() {
+    this.initialiseIdeas();
+  }
+
+  initialiseIdeas() {
     this.postgreSqlService.getIdeas().subscribe(ideas => this.ideas = ideas);
+  }
+
+  ngOnDestroy(){
+    if (this.navigationSubscription) {  
+      this.navigationSubscription.unsubscribe();
+   }
   }
 
 }
