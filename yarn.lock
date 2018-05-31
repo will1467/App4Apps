@@ -5913,6 +5913,10 @@ silent-error@^1.0.0:
   dependencies:
     debug "^2.2.0"
 
+"sl-blip@http://blip.strongloop.com/zone@0.3.4":
+  version "1.0.0"
+  resolved "http://blip.strongloop.com/zone@0.3.4#99c3bdcb734041b6a956c5c2ba218a5ec90dcda2"
+
 slack-node@~0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/slack-node/-/slack-node-0.2.0.tgz#de4b8dddaa8b793f61dbd2938104fdabf37dfa30"
@@ -7260,3 +7264,9 @@ yn@^2.0.0:
 zone.js@^0.8.19:
   version "0.8.26"
   resolved "https://registry.yarnpkg.com/zone.js/-/zone.js-0.8.26.tgz#7bdd72f7668c5a7ad6b118148b4ea39c59d08d2d"
+
+zone@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/zone/-/zone-0.3.4.tgz#5ec84f28d1e261fb6b2e9a031ccace64e9c7dde7"
+  optionalDependencies:
+    sl-blip "http://blip.strongloop.com/zone@0.3.4"

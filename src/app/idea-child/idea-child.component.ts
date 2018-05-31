@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Input } from '@angular/core';
-import { PostgreSqlService } from '../postgre-sql.service';
+import { PostgreSqlService } from '../services/postgre-sql.service';
 import { Idea } from '../models/Idea';
 import { Router } from '@angular/router';
 

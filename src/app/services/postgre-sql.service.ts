@@ -5,8 +5,8 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
  
-import { Idea } from './models/Idea';
-import { User } from './models/user';
+import { Idea } from '../models/Idea';
+import { User } from '../models/User';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
 };
@@ -69,15 +69,18 @@ private handleError<T> (operation = 'operation', result?: T) {
   }
 
   deleteIdea(idea : Idea){
-    console.log(idea.IdeaId);
     return this.http.post<Idea>(this.server + "/ideaDelete", idea, httpOptions).pipe(
       catchError(this.handleError<Idea>('ideaDelete'))
     )
   }
 
-  // authenticate(token : string) : Observable<User>{
-  //   console.log(token);
-  //   return this.http.get<User>()
-  // }
+  authenticate(token : string, UserId : string){
+    const headers = {
+      headers: new HttpHeaders({ 'x-access-token' : token})
+    }
+    return this.http.post<Object>(this.server + "/authenticate", {UserId : UserId}, headers).pipe(
+      catchError(this.handleError<Object>('authenticate'))
+    )
+  }
 
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { checkPasswordValidator } from '../shared/passwords-match.directive';
-import { PostgreSqlService } from '../postgre-sql.service';
+import { PostgreSqlService } from '../services/postgre-sql.service';
 import { Router } from "@angular/router";
 
 @Component({

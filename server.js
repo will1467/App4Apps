@@ -62,7 +62,7 @@ const bodyParser = require('body-parser');
 
 app.use(function(req, res, next) {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "origin, X-Requested-With, content-type, accept, access-control-allow-origin");
+    res.setHeader("Access-Control-Allow-Headers", "origin, X-Requested-With, content-type, accept, access-control-allow-origin, x-access-token");
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
     next();
   });
@@ -142,10 +142,9 @@ app.post("/login", function(req, response) {
     })
 })
 
-app.get('/authenticate', verifyToken, function(req, res, next){
-    User.findById(req.UserId, function(err, user){
-        if(err) return res.status(500).send("There was a problem finding the user.");
-        if(!user) return res.status(404).send("No user found");
+app.post('/authenticate', verifyToken, function(req, res, next){
+    User.findById(req.UserId).then(function(user){
+        if(!user) return res.status(200).send({auth: false, message : "No user found"});
         res.send(user);
     })
 })
@@ -195,10 +194,9 @@ function verifyToken(req,res,next) {
 
     jwt.verify(token, superNotSecretKey, function(err, decoded) {
         if(err){
-            return res.status(500).send({auth : false, message : 'Failed to authenticate token'});
+            return res.status(200).send({auth : false, message : 'Failed to authenticate token'});
         }
-        
-        req.userId = decoded.id;
+        req.UserId = decoded.id;
         next();
     });
 }

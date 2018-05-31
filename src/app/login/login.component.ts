@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { PostgreSqlService } from '../postgre-sql.service';
+import { PostgreSqlService } from '../services/postgre-sql.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +15,7 @@ export class LoginComponent implements OnInit {
   firstName = new FormControl("", Validators.required);
   password = new FormControl("", Validators.required);
 
-  constructor(fb: FormBuilder, private route: Router, private postgreSqlService : PostgreSqlService) {
+  constructor(fb: FormBuilder, private router: Router, private postgreSqlService : PostgreSqlService) {
     this.form = fb.group({
       "firstName": this.firstName,
       "password" : this.password,
@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('token', response["token"])
         localStorage.setItem('user', response["user"])
         localStorage.setItem('userid', response["userid"])
-        this.route.navigate(['main']);
+        this.router.navigate(['main']);
         this.form.reset();
       } else {
         console.log("Error, username or password was incorrect")
@@ -39,5 +39,4 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
   }
-
 }

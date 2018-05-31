@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
-import { PostgreSqlService } from '../postgre-sql.service';
+import { PostgreSqlService } from '../services/postgre-sql.service';
 import { Idea } from '../models/Idea';
 import { Router } from '@angular/router';
 

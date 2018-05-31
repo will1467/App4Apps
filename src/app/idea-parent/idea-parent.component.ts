@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IDEAS } from '../mock-ideas';
-import { PostgreSqlService } from '../postgre-sql.service';
-import { Idea } from '../Idea';
+import { PostgreSqlService } from '../services/postgre-sql.service';
+import { Idea } from '../models/Idea';
 import { Router, NavigationEnd } from '@angular/router';
+import { User } from '../models/user';
 
 
 @Component({
@@ -18,7 +18,7 @@ export class IdeaParentComponent implements OnInit {
   constructor(private postgreSqlService : PostgreSqlService, private router : Router) {
     this.navigationSubscription = this.router.events.subscribe((e : any) => {
       if(e instanceof NavigationEnd) {
-        this.initialiseIdeas();
+        this.ngOnInit();
       }
     })
    }
@@ -30,6 +30,13 @@ export class IdeaParentComponent implements OnInit {
 
   initialiseIdeas() {
     this.postgreSqlService.getIdeas().subscribe(ideas => this.ideas = ideas);
+  }
+
+  onLogout() {
+    localStorage.setItem('token', "null");
+    localStorage.setItem('userid', "null");
+    localStorage.setItem('user', "null");
+    this.router.navigate(['login']);
   }
 
   ngOnDestroy(){

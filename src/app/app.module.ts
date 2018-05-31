@@ -10,14 +10,18 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { IdeaParentComponent } from './idea-parent/idea-parent.component';
 import { IdeaChildComponent } from './idea-child/idea-child.component';
-import { PostgreSqlService } from './postgre-sql.service';
+import { PostgreSqlService } from './services/postgre-sql.service';
+import { LoginRedirectService } from './services/login-redirect.service';
+import { EnsureAuthenticatedService } from './services/ensure-authenticated.service';
 import { AddIdeaComponent } from './add-idea/add-idea.component';
 
+type RunGuardsAndResolvers = string;
+
 const Routes = [
-  {path: 'login', component : LoginComponent},
-  {path : '', component: RegisterComponent},
-  {path: 'main', component: IdeaParentComponent, runGuardsAndResolvers: "always"},
-  {path: 'addIdea', component: AddIdeaComponent}
+  {path: 'login', component : LoginComponent, canActivate : [LoginRedirectService]},
+  {path : '', component: RegisterComponent, canActivate : [LoginRedirectService]},
+  {path: 'main',  runGuardsAndResolvers: <RunGuardsAndResolvers>'always', component: IdeaParentComponent, canActivate : [EnsureAuthenticatedService]},
+  {path: 'addIdea', component: AddIdeaComponent, canActivate : [EnsureAuthenticatedService] }
 ];
 
 
@@ -40,7 +44,7 @@ const Routes = [
       Routes, {onSameUrlNavigation : 'reload'}
     ),
   ],
-  providers: [PostgreSqlService],
+  providers: [PostgreSqlService, LoginRedirectService, EnsureAuthenticatedService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
