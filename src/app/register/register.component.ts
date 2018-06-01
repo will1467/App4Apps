@@ -31,9 +31,13 @@ export class RegisterComponent implements OnInit {
   onSubmit(){
     this.postgreSqlService.register(this.form.value.firstName, this.form.value.password, this.form.value.email)
     .subscribe( response => {
-      localStorage.setItem('token', response["token"])
-      localStorage.setItem('user', response["user"])
-      localStorage.setItem('userid', response["userid"])
+      if(response["auth"]){
+        localStorage.setItem('token', response["token"])
+        localStorage.setItem('user', response["user"])
+        localStorage.setItem('userid', response["userid"])
+      } else if(response["err"]){
+        console.log(response["err"])
+      }
     })
     this.form.reset();
     this.router.navigate(['login']);

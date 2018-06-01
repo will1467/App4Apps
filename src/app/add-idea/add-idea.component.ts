@@ -25,11 +25,12 @@ export class AddIdeaComponent implements OnInit {
    }
 
   onSubmit() {
-    var newIdea = new Idea(this.form.value.title, this.form.value.description, "admin"); 
-    this.postgreSqlService.addIdea(newIdea).subscribe( idea => {
-       if(idea){
-         console.log("New Idea added successfully");
+    var newIdea = new Idea(this.form.value.title, this.form.value.description, localStorage.getItem('user')); 
+    this.postgreSqlService.addIdea(newIdea).subscribe( response => {
+       if(response["success"]){
          this.router.navigate(['main'])
+       } else if(response["err"]){
+         console.log(response["err"])
        }
     })
   }

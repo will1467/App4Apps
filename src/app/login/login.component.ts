@@ -25,14 +25,14 @@ export class LoginComponent implements OnInit {
   onSubmit(){
     this.postgreSqlService.login(this.form.value.firstName, this.form.value.password)
     .subscribe( response => {
-      if(response){
+      if(response["auth"]){
         localStorage.setItem('token', response["token"])
         localStorage.setItem('user', response["user"])
         localStorage.setItem('userid', response["userid"])
         this.router.navigate(['main']);
         this.form.reset();
-      } else {
-        console.log("Error, username or password was incorrect")
+      } else if(response["err"]) {
+        console.log(response["err"]);
       }
     })
   }

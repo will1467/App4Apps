@@ -17,12 +17,19 @@ export class IdeaChildComponent implements OnInit {
   ngOnInit() {
   }
 
+  checkIdeaAuthor(){
+    var user = localStorage.getItem('user');
+    if(this.idea.Author === user){
+      return true;
+    } else { return false; }
+  }
+
   onDeleteIdeaClick(){
     this.postgreSqlService.deleteIdea(this.idea).subscribe(success => {
       if(success){
         this.router.navigate(['main']);
       } else {
-        console.log("Entry not found")
+        console.log("Deletion failed");
       }
     })
   }

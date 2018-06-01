@@ -80,7 +80,7 @@ app.use("/dist", express.static(__dirname + "/dist"));
 
 app.get("/ideaget", function(req,res){
     Idea.all().then((ideas) => {
-            res.send(JSON.stringify(ideas));
+            res.status(200).send(JSON.stringify(ideas));
     })
 })
 
@@ -90,7 +90,9 @@ app.post("/ideacreate", function(req,res){
         Description : req.body.Description,
         Author : req.body.Author
     }).then( user => {
-        res.send(JSON.stringify(user))
+        res.status(200).send({success : true})
+    }).catch(err => {
+        if(err) response.status(200).send({err: err})
     })
 })
 
@@ -104,7 +106,6 @@ function cryptPassword(password){
 }
 
 app.post("/usercreate", function(req, res){
-    console.log(req.body);
     cryptPassword(req.body.Password).then(password => {
         User.create({
             UserName: req.body.UserName,
@@ -114,10 +115,10 @@ app.post("/usercreate", function(req, res){
             var token = jwt.sign({id : user.UserId}, superNotSecretKey, {
                 expiresIn : 86400
             });
-            response.send({auth : true, token : token, user : userDetails.UserName,  userid : userDetails.UserId})
+            response.status(200).send({auth : true, token : token, user : userDetails.UserName,  userid : userDetails.UserId})
         })
     }).catch(err => {
-        if(err) console.log(err);
+        if(err) response.status(200).send({err: err})
     })
 })
 
@@ -132,9 +133,9 @@ app.post("/login", function(req, response) {
                     var token = jwt.sign({id : userDetails.UserId}, superNotSecretKey, {
                         expiresIn : 86400
                     });
-                    response.send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
+                    response.status(200).send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
                 } else {
-                    response.send({err : "Password was incorrect"})
+                    response.status(200).send({err : "Password was incorrect"})
                 }
             })
 
@@ -144,17 +145,18 @@ app.post("/login", function(req, response) {
 
 app.post('/authenticate', verifyToken, function(req, res, next){
     User.findById(req.UserId).then(function(user){
-        if(!user) return res.status(200).send({auth: false, message : "No user found"});
-        res.send(user);
+        if(!user) return res.status(200).send({auth: false, err : "No user found"});
+        res.status(200).send(user);
     })
 })
 
-app.get("/userdelete", function(req, res){
-    User.find({where: {UserName: 'William'}}).then(function(result){
+app.post("/userDelete", function(req, res){
+    User.find({where: {UserId: parseInt(req.body.userId)}}).then(function(result){
         if(result){
             result.destroy({force : true});
+            res.status(200).send(true);
         } else {
-            console.log("Not Found");
+            res.status(200).send(false)
         }
 
     })
@@ -165,9 +167,9 @@ app.post("/ideaDelete", function(req, res){
     Idea.find({where: {IdeaId : parseInt(req.body.IdeaId)}}).then(function(result) {
         if(result){
             result.destroy({force : true});
-            res.send(true)
+            res.status(200).send(true)
         } else {
-            res.send(false)
+            res.status(200).send(false)
         }
     })
 })
@@ -189,12 +191,12 @@ app.listen(8888, ()=>{
 function verifyToken(req,res,next) {
     var token = req.headers['x-access-token'];
     if(!token){
-        return res.status(403).send({auth : false, mssg : 'No token provided'})
+        return res.status(200).send({auth : false, err : 'No token provided'})
     }
 
     jwt.verify(token, superNotSecretKey, function(err, decoded) {
         if(err){
-            return res.status(200).send({auth : false, message : 'Failed to authenticate token'});
+            return res.status(200).send({auth : false, err : 'Failed to authenticate token'});
         }
         req.UserId = decoded.id;
         next();

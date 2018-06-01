@@ -25,6 +25,7 @@ export class IdeaParentComponent implements OnInit {
 
 
   ngOnInit() {
+    console.log("Logged in as " + localStorage.getItem('user'));
     this.initialiseIdeas();
   }
 
@@ -37,6 +38,16 @@ export class IdeaParentComponent implements OnInit {
     localStorage.setItem('userid', "null");
     localStorage.setItem('user', "null");
     this.router.navigate(['login']);
+  }
+
+  onAccountDelete() {
+    this.postgreSqlService.deleteAccount(localStorage.getItem('userid')).subscribe(response => {
+      if(response){
+        this.onLogout();
+      } else {
+        console.log("An unexpected error occured : Deletion failed")
+      }
+    })
   }
 
   ngOnDestroy(){

@@ -13,7 +13,6 @@ export class LoginRedirectService implements CanActivate {
    canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) : boolean {
     const token = localStorage.getItem('token');
     let canActivate = false;
-    console.log(token);
     if(token === "null"){
       return true;
     //   this.postgreSqlService.authenticate(token, UserId).subscribe( response => {

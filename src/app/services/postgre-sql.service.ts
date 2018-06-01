@@ -43,14 +43,13 @@ private handleError<T> (operation = 'operation', result?: T) {
   getIdeas() : Observable<Idea[]>{
     return this.http.get<Idea[]>(this.server + "/ideaget")
       .pipe(
-        tap(ideas => console.log('fetched ideas')),
         catchError(this.handleError('getIdeas', []))
       )
   }
 
-  addIdea(idea : Idea) : Observable<Idea>{
-    return this.http.post<Idea>(this.server + "/ideacreate", idea, httpOptions).pipe(
-      catchError(this.handleError<Idea>('addIdea'))
+  addIdea(idea : Idea){
+    return this.http.post<Object>(this.server + "/ideacreate", idea, httpOptions).pipe(
+      catchError(this.handleError<Object>('addIdea'))
     )
   }
 
@@ -71,6 +70,12 @@ private handleError<T> (operation = 'operation', result?: T) {
   deleteIdea(idea : Idea){
     return this.http.post<Idea>(this.server + "/ideaDelete", idea, httpOptions).pipe(
       catchError(this.handleError<Idea>('ideaDelete'))
+    )
+  }
+
+  deleteAccount(userId : string){
+    return this.http.post<Object>(this.server + "/userDelete", {userId : userId}, httpOptions).pipe(
+      catchError(this.handleError<Idea>('userDelete'))
     )
   }
 
