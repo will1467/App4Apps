@@ -14,6 +14,7 @@ export class IdeaParentComponent implements OnInit {
 
   ideas = null;
   navigationSubscription;
+  signedInUser = localStorage.getItem('user');
 
   constructor(private postgreSqlService : PostgreSqlService, private router : Router) {
     this.navigationSubscription = this.router.events.subscribe((e : any) => {
@@ -25,7 +26,6 @@ export class IdeaParentComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log("Logged in as " + localStorage.getItem('user'));
     this.initialiseIdeas();
   }
 

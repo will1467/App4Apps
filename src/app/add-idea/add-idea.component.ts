@@ -35,6 +35,23 @@ export class AddIdeaComponent implements OnInit {
     })
   }
 
+  onLogout() {
+    localStorage.setItem('token', "null");
+    localStorage.setItem('userid', "null");
+    localStorage.setItem('user', "null");
+    this.router.navigate(['login']);
+  }
+
+  onAccountDelete() {
+    this.postgreSqlService.deleteAccount(localStorage.getItem('userid')).subscribe(response => {
+      if(response){
+        this.onLogout();
+      } else {
+        console.log("An unexpected error occured : Deletion failed")
+      }
+    })
+  }
+
   ngOnInit() {
 
   }
