@@ -36,7 +36,8 @@
   
   .blog-cover {
     background: url("./idea-banner.png");
-    background-size: 100% 100%;
+    background-origin: border-box;
+    background-size:auto;
     border-radius: 5px 5px 0 0;
     height: 15rem;
     box-shadow: inset rgba(0, 0, 0, 0.2) 0 64px 64px 16px;
@@ -154,7 +155,7 @@
   }
   
   .blog-footer li {
-    color: #999999;
+    color: #212529;
     font-size: .75rem;
     height: 1.5rem;
     letter-spacing: 1px;

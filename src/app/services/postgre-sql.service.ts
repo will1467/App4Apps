@@ -88,4 +88,11 @@ private handleError<T> (operation = 'operation', result?: T) {
     )
   }
 
+  likeIdea(idea : Idea){
+    console.log(idea);
+    return this.http.post<Idea>(this.server + "/ideaLike", idea, httpOptions).pipe(
+      catchError(this.handleError<Idea>('likeIdea'))
+    )
+  }
+
 }

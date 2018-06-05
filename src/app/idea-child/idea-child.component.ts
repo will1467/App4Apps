@@ -12,6 +12,8 @@ export class IdeaChildComponent implements OnInit {
 
   @Input() idea : Idea;
 
+  Liked = false;
+
   constructor(private postgreSqlService : PostgreSqlService, private router : Router) { }
 
   ngOnInit() {
@@ -32,6 +34,19 @@ export class IdeaChildComponent implements OnInit {
         console.log("Deletion failed");
       }
     })
+  }
+
+  addLike(){
+    if(!this.Liked){
+      this.postgreSqlService.likeIdea(this.idea).subscribe(response => {
+        if(response["err"]){
+          console.log(response["err"]);
+        } else {
+          this.idea.Likes += <any>1;
+          this.Liked = true;
+        }
+      })
+    }
   }
 
 }

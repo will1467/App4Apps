@@ -48,7 +48,10 @@ const Idea = sequelize.define('Idea', {
     },
     Author : {
         type: Sequelize.STRING
-    }
+    },
+    Likes : {
+        type : Sequelize.INTEGER
+    } 
 }, {
     schema : 'AppForApps'
 })
@@ -84,11 +87,32 @@ app.get("/ideaget", function(req,res){
     })
 })
 
+app.post("/ideaLike", function(req, res){
+    var updatedLikeCount = parseInt(req.body.Likes) + 1;
+    console.log(req.body);
+    Idea.find({where: {IdeaId: parseInt(req.body.IdeaId)}}).then(function(result){
+        if(result){
+            result.update({
+                Likes : updatedLikeCount
+            }).then(success =>{
+                if(success){
+                    res.status(200).send({success : true})
+                } else {
+                    res.status(200).send({err: "Database could not be updated"})
+                }
+            })
+        } else {
+            res.status(200).send({err: "Idea not found"})
+        }
+    })
+})
+
 app.post("/ideacreate", function(req,res){
     Idea.create({
         Title : req.body.Title,
         Description : req.body.Description,
-        Author : req.body.Author
+        Author : req.body.Author,
+        Likes : 0,
     }).then( user => {
         res.status(200).send({success : true})
     }).catch(err => {
