@@ -14,6 +14,7 @@ import { PostgreSqlService } from './services/postgre-sql.service';
 import { LoginRedirectService } from './services/login-redirect.service';
 import { EnsureAuthenticatedService } from './services/ensure-authenticated.service';
 import { AddIdeaComponent } from './add-idea/add-idea.component';
+import { NavBarComponent } from './nav-bar/nav-bar.component';
 
 type RunGuardsAndResolvers = string;
 
@@ -32,7 +33,8 @@ const Routes = [
     RegisterComponent,
     IdeaParentComponent,
     IdeaChildComponent,
-    AddIdeaComponent
+    AddIdeaComponent,
+    NavBarComponent
   ],
   imports: [
     BrowserModule,

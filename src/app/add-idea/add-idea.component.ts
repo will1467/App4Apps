@@ -10,7 +10,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-idea.component.css']
 })
 export class AddIdeaComponent implements OnInit {
-
   form : FormGroup;
 
   title = new FormControl("", Validators.required);
@@ -32,23 +31,6 @@ export class AddIdeaComponent implements OnInit {
        } else if(response["err"]){
          console.log(response["err"])
        }
-    })
-  }
-
-  onLogout() {
-    localStorage.setItem('token', "null");
-    localStorage.setItem('userid', "null");
-    localStorage.setItem('user', "null");
-    this.router.navigate(['login']);
-  }
-
-  onAccountDelete() {
-    this.postgreSqlService.deleteAccount(localStorage.getItem('userid')).subscribe(response => {
-      if(response){
-        this.onLogout();
-      } else {
-        console.log("An unexpected error occured : Deletion failed")
-      }
     })
   }
 

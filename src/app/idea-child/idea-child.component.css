@@ -35,8 +35,8 @@
   }
   
   .blog-cover {
-    background: url("idea-banner.jpg");
-    background-size: cover;
+    background: url("./idea-banner.png");
+    background-size: 100% 100%;
     border-radius: 5px 5px 0 0;
     height: 15rem;
     box-shadow: inset rgba(0, 0, 0, 0.2) 0 64px 64px 16px;
@@ -44,7 +44,6 @@
   
   .blog-author,
   .blog-author--no-cover {
-    margin: 0 auto;
     padding-top: .125rem;
     width: 80%;
   }
@@ -56,14 +55,15 @@
     content: " ";
     display: inline-block;
     height: 32px;
-    margin-right: .5rem;
+    margin-left: 20px;
+    margin-top: 20px;
     position: relative;
     top: 8px;
     width: 32px;
   }
   
   .blog-author h3 {
-    color: #39598c;
+    color: black;
     font-weight: 100;
   }
   

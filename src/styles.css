@@ -37,6 +37,7 @@ body {
 
   
   header.masthead {
+    height: 800px;
     position: relative;
     background-color: #343a40;
     background: url("./assets/bg-masthead.jpg") no-repeat center center;
