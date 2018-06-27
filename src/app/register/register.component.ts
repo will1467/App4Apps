@@ -13,6 +13,8 @@ export class RegisterComponent implements OnInit {
 
   form : FormGroup;
 
+  error : String;
+
   firstName = new FormControl("", Validators.required);
   password = new FormControl("", Validators.required);
   repeatedPassword = new FormControl("", Validators.required);
@@ -32,11 +34,12 @@ export class RegisterComponent implements OnInit {
     this.postgreSqlService.register(this.form.value.firstName, this.form.value.password, this.form.value.email)
     .subscribe( response => {
       if(response["auth"]){
+        this.error = null;
         localStorage.setItem('token', response["token"])
         localStorage.setItem('user', response["user"])
         localStorage.setItem('userid', response["userid"])
       } else if(response["err"]){
-        console.log(response["err"])
+        this.error = response["err"];
       }
     })
     this.form.reset();

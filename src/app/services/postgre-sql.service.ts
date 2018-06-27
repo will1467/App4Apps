@@ -7,13 +7,10 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
  
 import { Idea } from '../models/Idea';
 import { User } from '../models/User';
+import { Comment } from '../models/Comment';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
 };
-
-const postOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
-}
 
 
 
@@ -47,16 +44,31 @@ private handleError<T> (operation = 'operation', result?: T) {
       )
   }
 
+  getComments(user) : Observable<Comment[]>{
+    return this.http.get<Comment[]>(this.server + "/commentget", {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'}),
+      params: {IdeaId : user}
+    }).pipe(
+      catchError(this.handleError<Comment[]>('getComments', []))
+    )
+  }
+
   addIdea(idea : Idea){
     return this.http.post<Object>(this.server + "/ideacreate", idea, httpOptions).pipe(
       catchError(this.handleError<Object>('addIdea'))
     )
   }
 
+  addComment(comment : Comment){
+    return this.http.post<Object>(this.server + "/commentcreate", comment, httpOptions).pipe(
+      catchError(this.handleError<Object>('addComment'))
+    )
+  }
+
   register(username : string, password : string, email : string) : Observable<Object>{
 
     var newUser = new User(username, password, email);
-    return this.http.post<Object>(this.server + "/usercreate", newUser, postOptions).pipe(
+    return this.http.post<Object>(this.server + "/usercreate", newUser, httpOptions).pipe(
       catchError(this.handleError<Object>('register'))
     )
   }

@@ -15,13 +15,14 @@ import { LoginRedirectService } from './services/login-redirect.service';
 import { EnsureAuthenticatedService } from './services/ensure-authenticated.service';
 import { AddIdeaComponent } from './add-idea/add-idea.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
+import { CommentComponent } from './comment/comment.component';
 
 type RunGuardsAndResolvers = string;
 
 const Routes = [
   {path: 'login', component : LoginComponent, canActivate : [LoginRedirectService]},
   {path : '', component: RegisterComponent, canActivate : [LoginRedirectService]},
-  {path: 'main',  runGuardsAndResolvers: <RunGuardsAndResolvers>'always', component: IdeaParentComponent, canActivate : [EnsureAuthenticatedService]},
+  {path: 'main',  runGuardsAndResolvers: 'always', component: IdeaParentComponent, canActivate : [EnsureAuthenticatedService]},
   {path: 'addIdea', component: AddIdeaComponent, canActivate : [EnsureAuthenticatedService] }
 ];
 
@@ -34,7 +35,8 @@ const Routes = [
     IdeaParentComponent,
     IdeaChildComponent,
     AddIdeaComponent,
-    NavBarComponent
+    NavBarComponent,
+    CommentComponent
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,8 @@ export class LoginComponent implements OnInit {
 
   form : FormGroup;
 
+  error: String;
+
   firstName = new FormControl("", Validators.required);
   password = new FormControl("", Validators.required);
 
@@ -26,13 +28,14 @@ export class LoginComponent implements OnInit {
     this.postgreSqlService.login(this.form.value.firstName, this.form.value.password)
     .subscribe( response => {
       if(response["auth"]){
+        this.error = null;
         localStorage.setItem('token', response["token"])
         localStorage.setItem('user', response["user"])
         localStorage.setItem('userid', response["userid"])
         this.router.navigate(['main']);
         this.form.reset();
       } else if(response["err"]) {
-        console.log(response["err"]);
+        this.error = response["err"];
       }
     })
   }

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, OnInit, Input } from '@angular/core';
 import { PostgreSqlService } from '../services/postgre-sql.service';
 import { Idea } from '../models/Idea';
+import { Comment } from '../models/Comment';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,10 +14,22 @@ export class IdeaChildComponent implements OnInit {
   @Input() idea : Idea;
 
   Liked = false;
+  showComments = false;
+  comments = null;
 
   constructor(private postgreSqlService : PostgreSqlService, private router : Router) { }
 
   ngOnInit() {
+    this.getComments();
+  }
+
+  getComments(){
+    this.postgreSqlService.getComments(this.idea.IdeaId).subscribe(comments => this.comments = comments);
+  }
+
+  addComment(){
+    // // var newComment = new Comment()
+    // this.postgreSqlService.addComment()
   }
 
   checkIdeaAuthor(){
@@ -47,6 +60,11 @@ export class IdeaChildComponent implements OnInit {
         }
       })
     }
+  }
+
+  showCommentBox(){
+    let bool = this.showComments ? false : true
+    this.showComments = bool;
   }
 
 }

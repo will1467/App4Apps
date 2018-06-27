@@ -56,6 +56,32 @@ const Idea = sequelize.define('Idea', {
     schema : 'AppForApps'
 })
 
+const Comment = sequelize.define('Comment', {
+    CommentId : {
+        type: Sequelize.INTEGER,
+        primaryKey : true,
+        autoIncrement : true
+    },
+    IdeaId : {
+        type: Sequelize.INTEGER,
+        references : {
+            model: Idea,
+            key: 'IdeaId',
+        }
+    },
+    Text : {
+        type: Sequelize.STRING
+    },
+    Author : {
+        type: Sequelize.STRING
+    },
+    Likes : {
+        type: Sequelize.INTEGER
+    }
+}, {
+    schema : 'AppForApps'
+})
+
 const _HASH = 8;
 
 
@@ -87,9 +113,31 @@ app.get("/ideaget", function(req,res){
     })
 })
 
+app.get("/commentget", function(req,res){
+    Comment.findAll({
+        where : {
+            IdeaId : req.query.IdeaId
+        }
+    }).then(comments => {
+        res.status(200).send(JSON.stringify(comments));
+    })
+})
+
+app.post("/commentCreate", function(req,res){
+    Comment.create({
+        Text : req.body.Text,
+        Author : req.body.Author,
+        IdeaId: req.body.Idea,
+        Likes : 0
+    }).then(comment=> {
+        res.status(200).send({success : true});
+    }).error(err => {
+        if(err) response.status(200).send({err: err})
+    })
+})
+
 app.post("/ideaLike", function(req, res){
     var updatedLikeCount = parseInt(req.body.Likes) + 1;
-    console.log(req.body);
     Idea.find({where: {IdeaId: parseInt(req.body.IdeaId)}}).then(function(result){
         if(result){
             result.update({
@@ -187,7 +235,6 @@ app.post("/userDelete", function(req, res){
 })
 
 app.post("/ideaDelete", function(req, res){
-    console.log(req.body.IdeaId);
     Idea.find({where: {IdeaId : parseInt(req.body.IdeaId)}}).then(function(result) {
         if(result){
             result.destroy({force : true});
