@@ -233,7 +233,7 @@ app.post("/login", function(req, response) {
             bCrypt.compare(req.body.Password, userDetails.Password, function(err, res){
                 if(res === true){
                     var token = jwt.sign({id : userDetails.UserId}, superNotSecretKey, {
-                        expiresIn : 86400
+                        expiresIn : 10000
                     });
                     response.status(200).send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
                 } else {
@@ -294,9 +294,8 @@ function cascadeDeleteComments(req,res,next){
         if(result){
             result.destroy({force : true});
             next();
-        } else {
-            res.status(200).send(false)
         }
+        next();
     })
 }
 
