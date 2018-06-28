@@ -268,9 +268,9 @@ app.post("/ideaDelete", cascadeDeleteComments, function(req, res){
     Idea.find({where: {IdeaId : parseInt(req.body.IdeaId)}}).then(function(result) {
         if(result){
             result.destroy({force : true});
-            res.status(200).send(true)
+            res.send(true)
         } else {
-            res.status(200).send(false)
+            res.send(false)
         }
     })
 })
