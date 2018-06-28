@@ -31,10 +31,6 @@
     </div>
     <div class="blog-tags">
       <ul>
-        <!-- <li><a href="#">css</a></li>
-        <li><a href="#">web design</a></li>
-        <li><a href="#">codepen</a></li> -->
-        <!-- <li><a href="https://twitter.com/russbeye">twitter</a></li> -->
       </ul>
     </div>
   </div>
@@ -42,19 +38,19 @@
   <div class="blog-footer">
     <ul>
       <li class="published-date">{{idea.createdAt | date : 'mediumDate'}}</li>
-      <li class="comments"><a style="cursor: pointer" (click) = "showCommentBox()"><svg class="icon-bubble"><use xlink:href="#icon-bubble"></use></svg><span class="numero">4</span></a></li>
+      <li class="comments"><a style="cursor: pointer" (click) = "showCommentBox()"><svg class="icon-bubble"><use xlink:href="#icon-bubble"></use></svg><span class="numero"> {{comments.length}}</span></a></li>
       <li class="shares"><a style="cursor: pointer" (click) = "addLike()"><svg class="icon-star" [style.fill] = "Liked ? '#ff4d4d' : '#999999'"><use xlink:href="#icon-star"></use></svg><span class="numero">{{idea.Likes}}</span></a></li>
-      <a class="btn" style="margin-left: 20px;" *ngIf="checkIdeaAuthor()" (click) = "onDeleteIdeaClick()">Delete</a>
+      <a class="btn"  style="margin-left: 20px;" *ngIf="checkIdeaAuthor()" (click) = "onDeleteIdeaClick()">Delete</a>
     </ul>
   </div>
 
   <div *ngIf="showComments" class="panel panel-white post panel-shadow">
-      <app-comment *ngFor = "let comment of comments"
-      [comment] = "comment">
-      </app-comment>
+      <ng-container *ngFor = "let comment of comments">
+        <app-comment *ngIf = "comment.CommentId" [comment] = "comment"></app-comment>
+      </ng-container>
       <div class="status-upload">
-          <form>
-            <textarea placeholder="Add a Comment..." ></textarea>
+          <form #commentForm= "ngForm">
+            <textarea name="Text" [(ngModel)]="commentText" (keypress)="onCommentKeyPress($event)" placeholder="Add a Comment..." ></textarea>
           </form>
         </div><!-- Status Upload  -->
   </div>

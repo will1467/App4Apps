@@ -15,11 +15,13 @@ export class IdeaChildComponent implements OnInit {
 
   Liked = false;
   showComments = false;
-  comments = null;
+  comments = [];
+  commentText = null;
 
   constructor(private postgreSqlService : PostgreSqlService, private router : Router) { }
 
   ngOnInit() {
+    this.Liked = false;
     this.getComments();
   }
 
@@ -27,9 +29,22 @@ export class IdeaChildComponent implements OnInit {
     this.postgreSqlService.getComments(this.idea.IdeaId).subscribe(comments => this.comments = comments);
   }
 
+  onCommentKeyPress( event : any){
+    if(event.keyCode === 13){
+      this.addComment();
+    }
+  }
+
   addComment(){
-    // // var newComment = new Comment()
-    // this.postgreSqlService.addComment()
+    var newComment = new Comment(this.commentText, localStorage.getItem('user'), this.idea.IdeaId)
+    this.postgreSqlService.addComment(newComment).subscribe(response => {
+      if(response["err"]){
+        console.log(response["err"])
+      } else {
+        this.commentText = null;
+        this.getComments();
+      }
+    })
   }
 
   checkIdeaAuthor(){
@@ -42,7 +57,7 @@ export class IdeaChildComponent implements OnInit {
   onDeleteIdeaClick(){
     this.postgreSqlService.deleteIdea(this.idea).subscribe(success => {
       if(success){
-        this.router.navigate(['main']);
+        this.idea.IdeaId = null;
       } else {
         console.log("Deletion failed");
       }

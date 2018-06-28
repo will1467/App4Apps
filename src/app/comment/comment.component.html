@@ -2,21 +2,22 @@
     <div class="panel panel-white post panel-shadow">
         <div class="post-heading">
             <div class="pull-left image">
-                <img src="http://bootdey.com/img/Content/user_1.jpg" class="img-circle avatar" alt="user profile image">
+                <img src="../assets/commentprofile.png" class="img-circle avatar" alt="user profile image">
             </div>
             <div class="pull-left meta">
                 <div class="title h5">
-                    <a href="#"><b>{{comment.Author}}</b></a>
+                    <a href="#"><b>{{comment.Author}}</b></a> 
                     commented.
+                    <a class="btn" style="margin-left: 20px;" *ngIf="checkCommentAuthor()" (click) = "onDeleteCommentClick()">Delete</a>
                 </div>
-                <h6 class="text-muted time">{{comment.UpdatedAt}}</h6>
+                <h6 class="text-muted time">{{comment.createdAt | date : 'shortDate'}}</h6>
             </div>
         </div> 
         <div class="post-description"> 
             <p>{{comment.Text}}</p>
             <div class="stats">
-                <a href="#" class="btn btn-default stat-item">
-                    <i class="fa fa-thumbs-up icon"></i>{{comment.Likes}}
+                <a class="btn btn-default stat-item">
+                    <i (click) = "addLike()" class="fa fa-thumbs-up icon"></i>{{comment.Likes}}
                 </a>
             </div>
         </div>

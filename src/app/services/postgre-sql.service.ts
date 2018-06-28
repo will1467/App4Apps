@@ -65,6 +65,12 @@ private handleError<T> (operation = 'operation', result?: T) {
     )
   }
 
+  deleteComment(comment : Comment){
+    return this.http.post<Comment>(this.server + "/commentDelete", comment, httpOptions).pipe(
+      catchError(this.handleError<Comment>('commentDelete'))
+    )
+  }
+
   register(username : string, password : string, email : string) : Observable<Object>{
 
     var newUser = new User(username, password, email);
@@ -101,9 +107,14 @@ private handleError<T> (operation = 'operation', result?: T) {
   }
 
   likeIdea(idea : Idea){
-    console.log(idea);
     return this.http.post<Idea>(this.server + "/ideaLike", idea, httpOptions).pipe(
       catchError(this.handleError<Idea>('likeIdea'))
+    )
+  }
+
+  likeComment(comment : Comment){
+    return this.http.post<Comment>(this.server + "/commentLike", comment, httpOptions).pipe(
+      catchError(this.handleError<Comment>('likeComment'))
     )
   }
 

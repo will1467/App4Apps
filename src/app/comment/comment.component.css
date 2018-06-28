@@ -102,3 +102,14 @@
 .post .post-footer .comments-list .comment > .comments-list {
   margin-left: 50px;
 }
+
+a {
+  color: #4d4dff !important;
+  text-decoration: none;
+  -webkit-transition: .25s ease;
+  transition: .25s ease;
+}
+a:hover {
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+}

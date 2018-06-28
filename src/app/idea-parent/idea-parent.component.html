@@ -1,7 +1,9 @@
 
 <div class = "idea-list">
  <app-nav-bar></app-nav-bar>
-  <app-idea-child *ngFor = "let idea of ideas"
-      [idea] = "idea">
-  </app-idea-child>
+  <ng-container *ngFor = "let idea of ideas">
+    <app-idea-child *ngIf = "idea.IdeaId"
+        [idea] = "idea">
+    </app-idea-child>
+  </ng-container>
 </div>

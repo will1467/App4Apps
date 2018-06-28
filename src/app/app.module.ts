@@ -22,7 +22,7 @@ type RunGuardsAndResolvers = string;
 const Routes = [
   {path: 'login', component : LoginComponent, canActivate : [LoginRedirectService]},
   {path : '', component: RegisterComponent, canActivate : [LoginRedirectService]},
-  {path: 'main',  runGuardsAndResolvers: 'always', component: IdeaParentComponent, canActivate : [EnsureAuthenticatedService]},
+  {path: 'main', component: IdeaParentComponent, canActivate : [EnsureAuthenticatedService]},
   {path: 'addIdea', component: AddIdeaComponent, canActivate : [EnsureAuthenticatedService] }
 ];
 

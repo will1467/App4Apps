@@ -127,12 +127,42 @@ app.post("/commentCreate", function(req,res){
     Comment.create({
         Text : req.body.Text,
         Author : req.body.Author,
-        IdeaId: req.body.Idea,
+        IdeaId: req.body.IdeaId,
         Likes : 0
     }).then(comment=> {
         res.status(200).send({success : true});
     }).error(err => {
         if(err) response.status(200).send({err: err})
+    })
+})
+
+app.post("/commentDelete", function(req,res){
+    Comment.find({where: {CommentId: parseInt(req.body.CommentId)}}).then(function(result){
+        if(result){
+            result.destroy({force : true});
+            res.status(200).send(true);
+        } else {
+            res.status(200).send(false)
+        }
+    })
+})
+
+app.post("/commentLike", function(req,res){
+    var updatedLikeCount = parseInt(req.body.Likes) + 1;
+    Comment.find({where: {CommentId: parseInt(req.body.CommentId)}}).then(function(result){
+        if(result){
+            result.update({
+                Likes : updatedLikeCount
+            }).then(success => {
+                if(success){
+                    res.status(200).send({success: true})
+                } else {
+                    res.status(200).send({err: "Database could not be updated"})
+                }
+            })
+        } else {
+            res.status(200).send({err: "Comment not found"})
+        }
     })
 })
 
@@ -187,10 +217,10 @@ app.post("/usercreate", function(req, res){
             var token = jwt.sign({id : user.UserId}, superNotSecretKey, {
                 expiresIn : 86400
             });
-            response.status(200).send({auth : true, token : token, user : userDetails.UserName,  userid : userDetails.UserId})
+            res.status(200).send({auth : true, token : token, user : user.UserName,  userid : user.UserId})
         })
     }).catch(err => {
-        if(err) response.status(200).send({err: err})
+        if(err) res.status(200).send({err: err})
     })
 })
 
@@ -234,7 +264,7 @@ app.post("/userDelete", function(req, res){
     })
 })
 
-app.post("/ideaDelete", function(req, res){
+app.post("/ideaDelete", cascadeDeleteComments, function(req, res){
     Idea.find({where: {IdeaId : parseInt(req.body.IdeaId)}}).then(function(result) {
         if(result){
             result.destroy({force : true});
@@ -258,6 +288,17 @@ app.listen(8888, ()=>{
     testDBConnection();
     console.log("server started!");
 })
+
+function cascadeDeleteComments(req,res,next){
+    Comment.find({where: {IdeaId: parseInt(req.body.IdeaId)}}).then(function(result){
+        if(result){
+            result.destroy({force : true});
+            next();
+        } else {
+            res.status(200).send(false)
+        }
+    })
+}
 
 function verifyToken(req,res,next) {
     var token = req.headers['x-access-token'];
