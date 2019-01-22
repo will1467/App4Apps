@@ -24,7 +24,7 @@ app.use("/api/user", Users);
 app.use("/api/comment", Comments);
 app.use("/api/idea", Ideas);
 
-if(process.env.NPM_CONFIG_PRODUCTION === 'production'){
+if(process.env.NODE_ENV === 'production'){
   app.use(express.static('/client/dist'));
   app.get("*", () => (req, res) =>{
     res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
