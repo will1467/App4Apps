@@ -7,7 +7,8 @@ var db = null;
 
 if (process.env.NODE_ENV === 'production'){
     db = new Sequelize(config.DATABASE_URL);
-    db.createSchema("AppForApps");
+    //Schema only needs to be created once
+    //db.createSchema("AppForApps");
 } else {
     db = new Sequelize('AppForApps', 'postgres', 'root', {
         host: 'localhost',
