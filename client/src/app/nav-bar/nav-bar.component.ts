@@ -14,7 +14,7 @@ export class NavBarComponent implements OnInit {
   linkRoute = "";
   signedInUser = localStorage.getItem('user');
 
-  constructor(private router : Router, private postgreSqlService : PostgreSqlService) { }
+  constructor(public router : Router, private postgreSqlService : PostgreSqlService) { }
 
   ngOnInit() {
     if(this.router.url === "/" || this.router.url === "/login"){

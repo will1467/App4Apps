@@ -1,4 +1,5 @@
 const express = require("express")
+const path = require('path');
 
 
 //setup app
@@ -23,11 +24,12 @@ app.use("/api/user", Users);
 app.use("/api/comment", Comments);
 app.use("/api/idea", Ideas);
 
-// app.use("/dist", express.static(__dirname + "/dist"));
-
-// app.get("/*", function(req, res){
-//     res.sendFile(__dirname  + '/dist/index.html');
-// })
+if(process.env.NPM_CONFIG_PRODUCTION === 'production'){
+  app.use(express.static('/client/dist'));
+  app.get("*", () => (req, res) =>{
+    res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+  })
+}
 
 
 
