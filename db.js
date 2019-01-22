@@ -3,10 +3,16 @@ const config = require('./config');
 
 console.log("Connection String", config.DATABASE_URL);
 
-const db = new Sequelize('dci52fapfflq1', 'wpzgzqdwyntlkb', '91ad8617c811af48f163cb003ab77f92339dc6041ef557dbd20be51ececd56e4', {
-    dialect : 'postgres'
-});
+var db = null;
 
-db.createSchema("AppForApps");
+if (process.env.NODE_ENV === 'production'){
+    db = new Sequelize(config.DATABASE_URL);
+    db.createSchema("AppForApps");
+} else {
+    db = new Sequelize('AppForApps', 'postgres', 'root', {
+        host: 'localhost',
+        dialect: 'postgres'
+    })
+}
 
 module.exports = db;
