@@ -20,4 +20,6 @@ const User = db.define('User', {
     schema : 'AppForApps'
 })
 
+db.sync();
+
 module.exports = User;

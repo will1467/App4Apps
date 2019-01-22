@@ -4,20 +4,22 @@ import { Observable } from 'rxjs/Observable';
 import { catchError, map, tap } from 'rxjs/operators';
 import { of } from 'rxjs/observable/of';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { isDevMode } from '@angular/core';
+
  
 import { Idea } from '../models/Idea';
 import { User } from '../models/User';
 import { Comment } from '../models/Comment';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json', 'Access-Control-Allow-Origin' : '*'})
 };
 
 
 
-
 @Injectable()
 export class PostgreSqlService {
-  private server = "http://localhost:5000";
+  private server = "";
 
    /**
  * Handle Http operation that failed.
@@ -35,7 +37,11 @@ private handleError<T> (operation = 'operation', result?: T) {
 }
 
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) { 
+    if(isDevMode()){
+      this.server = "http://localhost:5000"
+    }
+  }
 
   getIdeas() : Observable<Idea[]>{
     return this.http.get<Idea[]>(this.server + "/api/idea")

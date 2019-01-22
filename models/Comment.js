@@ -28,4 +28,6 @@ const Comment = db.define('Comment', {
     schema : 'AppForApps'
 })
 
+db.sync();
+
 module.exports = Comment;

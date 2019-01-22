@@ -23,4 +23,5 @@ const Idea = db.define('Idea', {
     schema : 'AppForApps'
 })
 
+db.sync();
 module.exports = Idea;
