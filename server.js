@@ -29,6 +29,9 @@ if(process.env.NODE_ENV === 'production'){
   app.get("*", () => (req, res) =>{
     res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
   })
+} else {
+  //Enable cors locally
+  app.use(cors(corsOptions));
 }
 
 
@@ -42,7 +45,9 @@ const testDBConnection = () => {
   });
 }
 
-app.listen(config.SERVER_PORT, ()=>{
+var serverPort = process.env.PORT || 5000;
+
+app.listen(serverPort, ()=>{
     testDBConnection();
     console.log("server started!");
 })
