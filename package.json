@@ -29,5 +29,9 @@
   },
   "author": "William Wrigley",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/WWrigley/app4apps#readme"
+  "homepage": "https://bitbucket.org/WWrigley/app4apps#readme",
+  "engines" : {
+    "node" : "10.14.0",
+    "npm" : "6.1.0"
+  }
 }
