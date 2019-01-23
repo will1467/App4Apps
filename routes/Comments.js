@@ -3,7 +3,19 @@ const router = express.Router();
 
 const Comment = require('../models/Comment');
 
-router.get("/", function(req,res){
+const verifyToken = require('./auth');
+
+router.get("/", async function(req,res){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
     Comment.findAll({
         where : {
             IdeaId : req.query.IdeaId
@@ -13,7 +25,18 @@ router.get("/", function(req,res){
     })
 })
 
-router.post("/", function(req,res){
+router.post("/", async function(req,res){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
+
     Comment.create({
         Text : req.body.Text,
         Author : req.body.Author,
@@ -26,7 +49,18 @@ router.post("/", function(req,res){
     })
 })
 
-router.delete("/", function(req,res){
+router.delete("/", async function(req,res){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
+
     Comment.find({where: {CommentId: req.query.id}}).then(function(result){
         if(result){
             result.destroy({force : true});
@@ -37,7 +71,17 @@ router.delete("/", function(req,res){
     })
 })
 
-router.post("/like", function(req,res){
+router.post("/like", async function(req,res){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
     var updatedLikeCount = parseInt(req.body.Likes) + 1;
     Comment.find({where: {CommentId: parseInt(req.body.CommentId)}}).then(function(result){
         if(result){

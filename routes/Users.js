@@ -1,4 +1,3 @@
-const sequelize = require('sequelize');
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
@@ -9,21 +8,7 @@ const User = require('../models/User');
 const _HASH = 8;
 const superNotSecretKey = "muchsecretmanywow";
 
-
-const verifyToken = (req,res,next) => {
-    var token = req.headers['x-access-token'];
-    if(!token){
-        return res.status(200).send({auth : false, err : 'No token provided'})
-    }
-
-    jwt.verify(token, superNotSecretKey, function(err, decoded) {
-        if(err){
-            return res.status(200).send({auth : false, err : 'Failed to authenticate token'});
-        }
-        req.UserId = decoded.id;
-        next();
-    });
-}
+const verifyToken = require('./Auth');
 
 
 const cryptPassword = (password) => {
@@ -62,7 +47,7 @@ router.post("/login", function(req, response) {
             bCrypt.compare(req.body.Password, userDetails.Password, function(err, res){
                 if(res === true){
                     var token = jwt.sign({id : userDetails.UserId}, superNotSecretKey, {
-                        expiresIn : 10000
+                        expiresIn : 86400
                     });
                     response.status(200).send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
                 } else {
@@ -74,14 +59,29 @@ router.post("/login", function(req, response) {
     })
 })
 
-router.post('/auth', verifyToken, function(req, res, next){
-    User.findById(req.UserId).then(function(user){
-        if(!user) return res.status(200).send({auth: false, err : "No user found"});
-        res.status(200).send({auth: true});
-    })
+router.get('/auth', async function(req, res, next){
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+       res.status(200).send(true);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
 })
 
-router.delete("/", function(req, res){
+router.delete("/", async function(req, res){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return next();
+    }
+
     User.find({where: {UserId: parseInt(req.query.id)}}).then(function(result){
         if(result){
             result.destroy({force : true});

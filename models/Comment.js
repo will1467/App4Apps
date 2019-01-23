@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const db = require ('../db');
 const Idea = require('../models/Idea');
 
+db.query('CREATE SCHEMA IF NOT EXISTS "AppForApps";');
 const Comment = db.define('Comment', {
     CommentId : {
         type: Sequelize.INTEGER,

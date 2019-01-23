@@ -1,6 +1,7 @@
 const db = require ('../db');
 const Sequelize = require('sequelize');
 
+db.query('CREATE SCHEMA IF NOT EXISTS "AppForApps";');
 const Idea = db.define('Idea', {
     IdeaId : {
         type: Sequelize.INTEGER,

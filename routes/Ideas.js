@@ -4,6 +4,8 @@ const router = express.Router();
 const Idea = require('../models/Idea');
 const Comment = require('../models/Idea');
 
+const verifyToken = require('./Auth');
+
 const cascadeDeleteComments = (id) => {
     Comment.find({where: {IdeaId: id}}).then(function(result){
         if(result){
@@ -13,14 +15,35 @@ const cascadeDeleteComments = (id) => {
 }
 
 
-router.get("/", function(req,res){
+router.get("/", async function(req,res,next){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
     Idea.all().then((ideas) => {
             res.status(200).send(JSON.stringify(ideas));
     })
 })
 
 
-router.post("/like", function(req, res){
+router.post("/like", async function(req, res, next){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
+
     var updatedLikeCount = parseInt(req.body.Likes) + 1;
     Idea.find({where: {IdeaId: parseInt(req.body.IdeaId)}}).then(function(result){
         if(result){
@@ -39,7 +62,18 @@ router.post("/like", function(req, res){
     })
 })
 
-router.post("/", function(req,res){
+router.post("/", async function(req,res, next){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
+
     Idea.create({
         Title : req.body.Title,
         Description : req.body.Description,
@@ -52,7 +86,18 @@ router.post("/", function(req,res){
     })
 })
 
-router.delete("/", function(req, res){
+router.delete("/", async function(req, res, next){
+
+    var reqToken = req.get('x-access-token');
+    try {
+       const authToken = await verifyToken(reqToken);
+    } catch(err){
+       res.sendStatus(403);
+       //return next to stop execution (prevents "set headers after they are sent" error)
+       return;
+    }
+
+
     Idea.find({where: {IdeaId : parseInt(req.query.id)}}).then(function(result) {
 
         cascadeDeleteComments(req.query.id);
