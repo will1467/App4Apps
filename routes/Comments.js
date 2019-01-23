@@ -3,7 +3,7 @@ const router = express.Router();
 
 const Comment = require('../models/Comment');
 
-const verifyToken = require('./auth');
+const verifyToken = require('./Auth');
 
 router.get("/", async function(req,res){
 
