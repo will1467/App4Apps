@@ -36,6 +36,8 @@ private handleError<T> (operation = 'operation', result?: T) {
   constructor(private http: HttpClient) { 
     if(isDevMode()){
       this.server = "http://localhost:5000"
+    } else {
+      this.server = "https://app4apps/herokuapp.com";
     }
   }
 
