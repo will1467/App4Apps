@@ -11,7 +11,6 @@ import { RegisterComponent } from './register/register.component';
 import { IdeaParentComponent } from './idea-parent/idea-parent.component';
 import { IdeaChildComponent } from './idea-child/idea-child.component';
 import { PostgreSqlService } from './services/postgre-sql.service';
-import { LoginRedirectService } from './services/login-redirect.service';
 import { EnsureAuthenticatedService } from './services/ensure-authenticated.service';
 import { AddIdeaComponent } from './add-idea/add-idea.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
@@ -49,7 +48,7 @@ const Routes = [
       Routes, {onSameUrlNavigation : 'reload'}
     ),
   ],
-  providers: [PostgreSqlService, LoginRedirectService, EnsureAuthenticatedService],
+  providers: [PostgreSqlService, EnsureAuthenticatedService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

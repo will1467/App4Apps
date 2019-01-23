@@ -134,10 +134,6 @@ MIT
 MIT
 MIT
 
-@angular/compiler@5.2.11
-MIT
-MIT
-
 @angular/http@5.2.11
 MIT
 MIT
