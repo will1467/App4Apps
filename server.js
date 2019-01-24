@@ -20,6 +20,8 @@ const User = require('./models/User');
 const Idea = require('./models/Idea');
 const Comment = require('./models/Comment');
 
+db.sync();
+
 const Users = require('./routes/Users');
 const Comments = require('./routes/Comments');
 const Ideas = require('./routes/Ideas');
@@ -52,6 +54,7 @@ const testDBConnection = () => {
 var serverPort = process.env.PORT || 5000;
 
 app.listen(serverPort, ()=>{
+    db.sync();
     testDBConnection();
     console.log("server started!");
 })
