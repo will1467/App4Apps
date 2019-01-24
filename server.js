@@ -14,7 +14,11 @@ var corsOptions = {
 
 app.use(cors(corsOptions));
 
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+const User = require('./models/User');
+const Idea = require('./models/Idea');
+const Comment = require('./models/Comment');
 
 const Users = require('./routes/Users');
 const Comments = require('./routes/Comments');
