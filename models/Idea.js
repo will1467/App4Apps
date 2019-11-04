@@ -1,28 +1,27 @@
-const db = require ('../db');
-const Sequelize = require('sequelize');
+const mongoose = require("mongoose");
 
-db.query('CREATE SCHEMA IF NOT EXISTS "AppForApps";');
-const Idea = db.define('Idea', {
-    IdeaId : {
-        type: Sequelize.INTEGER,
-        primaryKey : true,
-        autoIncrement : true
+const IdeaSchema = mongoose.Schema({
+    Title: {
+        type: String,
+        required: true
     },
-    Title : {
-        type: Sequelize.STRING
+    Description: {
+        type: String,
+        required: true
     },
-    Description : {
-        type: Sequelize.STRING
+    Author: {
+        type: String,
+        required: true
     },
-    Author : {
-        type: Sequelize.STRING
+    Likes: {
+        type: Number
     },
-    Likes : {
-        type : Sequelize.INTEGER
-    } 
-}, {
-    schema : 'AppForApps'
-})
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
+});
 
-db.sync();
+const Idea = mongoose.model("idea", IdeaSchema);
+
 module.exports = Idea;

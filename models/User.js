@@ -1,26 +1,19 @@
-const Sequelize = require('sequelize'); 
-const db = require ('../db');
+const mongoose = require("mongoose");
 
-db.query('CREATE SCHEMA IF NOT EXISTS "AppForApps";');
-const User = db.define('User', {
-    UserId : {
-        type: Sequelize.INTEGER,
-        primaryKey : true,
-        autoIncrement : true
+const UserSchema = mongoose.Schema({
+    UserName: {
+        type: String,
+        required: true
     },
-    UserName : {
-        type: Sequelize.STRING
+    Password: {
+        type: String,
+        required: true
     },
-    Password : {
-        type: Sequelize.STRING
-    },
-    Email : {
-        type: Sequelize.STRING
+    Email: {
+        type: String,
+        required: true
     }
-}, {
-    schema : 'AppForApps'
-})
+});
 
-db.sync();
-
+const User = mongoose.model("user", UserSchema);
 module.exports = User;

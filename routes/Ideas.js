@@ -1,114 +1,97 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-const Idea = require('../models/Idea');
-const Comment = require('../models/Idea');
+const Idea = require("../models/Idea");
+const Comment = require("../models/Comment");
 
-const verifyToken = require('./Auth');
+const verifyToken = require("./Auth");
 
-const cascadeDeleteComments = (id) => {
-    Comment.find({where: {IdeaId: id}}).then(function(result){
-        if(result){
-            result.destroy({force : true});
+router.get("/", async (req, res) => {
+    var reqToken = req.get("x-access-token");
+    try {
+        const authToken = await verifyToken(reqToken);
+    } catch (err) {
+        return res.sendStatus(403);
+    }
+
+    try {
+        const ideas = await Idea.find();
+        res.status(200).send(JSON.stringify(ideas));
+    } catch (err) {
+        console.log(err.message);
+        res.status(200).send({ err: err.message });
+    }
+});
+
+router.post("/like", async (req, res, next) => {
+    var reqToken = req.get("x-access-token");
+    try {
+        const authToken = await verifyToken(reqToken);
+    } catch (err) {
+        return res.sendStatus(403);
+    }
+
+    try {
+        const idea = await Idea.findById(req.body._id);
+        if (!idea) {
+            return res.status(200).send({ err: "Idea not found" });
         }
-    })
-}
 
+        let updatedLikeCount = parseInt(req.body.Likes) + 1;
+        idea.Likes = updatedLikeCount;
+        idea.save();
+        res.status(200).send({ success: true });
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
+    }
+});
 
-router.get("/", async function(req,res,next){
-
-    var reqToken = req.get('x-access-token');
+router.post("/", async (req, res) => {
+    const reqToken = req.get("x-access-token");
     try {
-       const authToken = await verifyToken(reqToken);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return;
+        const authToken = await verifyToken(reqToken);
+    } catch (err) {
+        return res.sendStatus(403);
     }
 
-    Idea.all().then((ideas) => {
-            res.status(200).send(JSON.stringify(ideas));
-    })
-})
-
-
-router.post("/like", async function(req, res, next){
-
-    var reqToken = req.get('x-access-token');
     try {
-       const authToken = await verifyToken(reqToken);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return;
+        const newIdea = new Idea({
+            Title: req.body.Title,
+            Description: req.body.Description,
+            Author: req.body.Author,
+            Likes: 0
+        });
+
+        await newIdea.save();
+        res.status(200).send({ success: true });
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
+    }
+});
+
+router.delete("/", async (req, res) => {
+    var reqToken = req.get("x-access-token");
+    try {
+        const authToken = await verifyToken(reqToken);
+    } catch (err) {
+        return res.sendStatus(403);
     }
 
-
-    var updatedLikeCount = parseInt(req.body.Likes) + 1;
-    Idea.find({where: {IdeaId: parseInt(req.body.IdeaId)}}).then(function(result){
-        if(result){
-            result.update({
-                Likes : updatedLikeCount
-            }).then(success =>{
-                if(success){
-                    res.status(200).send({success : true})
-                } else {
-                    res.status(200).send({err: "Database could not be updated"})
-                }
-            })
-        } else {
-            res.status(200).send({err: "Idea not found"})
+    try {
+        const idea = await Idea.findById(req.query.id);
+        //TODO: Cascade delete comments
+        if (!idea) {
+            return res.status(200).send({ err: "Idea not found" });
         }
-    })
-})
 
-router.post("/", async function(req,res, next){
-
-    var reqToken = req.get('x-access-token');
-    try {
-       const authToken = await verifyToken(reqToken);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return;
+        await idea.remove();
+        res.send(true);
+    } catch (error) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
     }
-
-
-    Idea.create({
-        Title : req.body.Title,
-        Description : req.body.Description,
-        Author : req.body.Author,
-        Likes : 0,
-    }).then( user => {
-        res.status(200).send({success : true})
-    }).catch(err => {
-        if(err) response.status(200).send({err: err})
-    })
-})
-
-router.delete("/", async function(req, res, next){
-
-    var reqToken = req.get('x-access-token');
-    try {
-       const authToken = await verifyToken(reqToken);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return;
-    }
-
-
-    Idea.find({where: {IdeaId : parseInt(req.query.id)}}).then(function(result) {
-
-        cascadeDeleteComments(req.query.id);
-
-        if(result){
-            result.destroy({force : true});
-            res.send(true)
-        } else {
-            res.send(false)
-        }
-    })
-})
+});
 
 module.exports = router;

@@ -1,0 +1,5 @@
+{
+    "port": "5000",
+    "mongoDBUri": "mongodb+srv://admin:admin@mern-ewww3.mongodb.net/AppForApps?retryWrites=true&w=majority",
+    "jwtSecret": "muchsecretmanywow"
+}

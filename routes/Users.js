@@ -1,96 +1,94 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const jwt = require('jsonwebtoken');
-const bCrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
+const bCrypt = require("bcrypt");
+const config = require("config");
 
-const User = require('../models/User');
+const User = require("../models/User");
 
 const _HASH = 8;
-const superNotSecretKey = "muchsecretmanywow";
+const verifyToken = require("./Auth");
 
-const verifyToken = require('./Auth');
-
-
-const cryptPassword = (password) => {
-    return new Promise(function(resolve, reject){
-            bCrypt.hash(password, _HASH, function(err, hash){
-                if(err) return reject(err);
-                return resolve(hash)
-            })
-        })
-}
-
-
-router.post("/", function(req, res){
-    cryptPassword(req.body.Password).then(password => {
-        User.create({
+router.post("/", async (req, res) => {
+    try {
+        const user = await User.findOne({ Email: req.body.Email });
+        if (user) {
+            return res.status(400).send({ err: "User already exists" });
+        }
+        const password = await bCrypt.hash(req.body.Password, _HASH);
+        const newUser = new User({
             UserName: req.body.UserName,
-            Password : password,
-            Email : req.body.Email
-        }).then(user => {
-            var token = jwt.sign({id : user.UserId}, superNotSecretKey, {
-                expiresIn : 86400
+            Password: password,
+            Email: req.body.Email
+        });
+        await newUser.save();
+
+        const token = jwt.sign({ id: newUser.id }, config.get("jwtSecret"), {
+            expiresIn: 86400
+        });
+
+        res.status(200).send({ auth: true, token: token, user: user.UserName, userid: user.UserId });
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
+    }
+});
+
+router.post("/login", async (req, res) => {
+    try {
+        const user = await User.findOne({ UserName: req.body.Username });
+        if (!user) {
+            return res.status(200).send({ err: "User was not found" });
+        }
+
+        const bMatch = await bCrypt.compare(req.body.Password, user.Password);
+        if (bMatch) {
+            const token = jwt.sign({ id: user.id }, config.get("jwtSecret"), {
+                expiresIn: 86400
             });
-            res.status(200).send({auth : true, token : token, user : user.UserName,  userid : user.UserId})
-        })
-    }).catch(err => {
-        if(err) res.status(200).send({err: err})
-    })
-})
-
-router.post("/login", function(req, response) {
-    User.findOne({ where : {UserName : req.body.Username }}).then(user => {
-        if(!user){
-            response.send({err : "User was not found"})
+            res.status(200).send({ auth: true, token: token, user: user.UserName, userid: user.id });
         } else {
-            var userDetails = user.get({plain: true});
-            bCrypt.compare(req.body.Password, userDetails.Password, function(err, res){
-                if(res === true){
-                    var token = jwt.sign({id : userDetails.UserId}, superNotSecretKey, {
-                        expiresIn : 86400
-                    });
-                    response.status(200).send({auth : true, token : token, user : userDetails.UserName, userid : userDetails.UserId})
-                } else {
-                    response.status(200).send({err : "Password was incorrect"})
-                }
-            })
-
+            return res.status(200).send({ err: "Invalid Credentials" });
         }
-    })
-})
-
-router.get('/auth', async function(req, res, next){
-    var reqToken = req.get('x-access-token');
-    try {
-       const authToken = await verifyToken(reqToken);
-       res.status(200).send(true);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return;
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err });
     }
-})
+});
 
-router.delete("/", async function(req, res){
-
-    var reqToken = req.get('x-access-token');
+router.get("/auth", async function(req, res, next) {
+    var reqToken = req.get("x-access-token");
     try {
-       const authToken = await verifyToken(reqToken);
-    } catch(err){
-       res.sendStatus(403);
-       //return next to stop execution (prevents "set headers after they are sent" error)
-       return next();
+        const authToken = await verifyToken(reqToken);
+        res.status(200).send(true);
+    } catch (err) {
+        res.sendStatus(403);
+        //return next to stop execution (prevents "set headers after they are sent" error)
+        return;
+    }
+});
+
+router.delete("/", async (req, res) => {
+    var reqToken = req.get("x-access-token");
+    try {
+        const authToken = await verifyToken(reqToken);
+    } catch (err) {
+        return res.sendStatus(403);
     }
 
-    User.find({where: {UserId: parseInt(req.query.id)}}).then(function(result){
-        if(result){
-            result.destroy({force : true});
-            res.status(200).send(true);
-        } else {
-            res.status(200).send(false)
+    try {
+        const user = await User.findById(req.query.id);
+        if (!user) {
+            return res.status(200).send(false);
         }
 
-    })
-})
+        await user.remove();
+        res.status(200).send(true);
+    } catch (err) {
+        console.console.error();
+        err.message;
+        res.status(200).send({ err: err });
+    }
+});
 
 module.exports = router;

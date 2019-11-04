@@ -1,17 +1,16 @@
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
+const config = require("config");
 
-const superNotSecretKey = "muchsecretmanywow";
-
-const verifyToken = (token) => {
+const verifyToken = token => {
     return new Promise((fnResolve, fnReject) => {
-        jwt.verify(token, superNotSecretKey, function(err, decoded){
-            if(err){
+        jwt.verify(token, config.get("jwtSecret"), function(err, decoded) {
+            if (err) {
                 fnReject(err);
             } else {
                 fnResolve(token);
             }
-        })
-    })
-}
+        });
+    });
+};
 
 module.exports = verifyToken;

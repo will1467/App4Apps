@@ -1,34 +1,28 @@
-const Sequelize = require('sequelize'); 
-const db = require ('../db');
-const Idea = require('../models/Idea');
+const mongoose = require("mongoose");
+const Idea = require("../models/Idea");
 
-db.query('CREATE SCHEMA IF NOT EXISTS "AppForApps";');
-const Comment = db.define('Comment', {
-    CommentId : {
-        type: Sequelize.INTEGER,
-        primaryKey : true,
-        autoIncrement : true
+const CommentSchema = mongoose.Schema({
+    Idea: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "idea"
     },
-    IdeaId : {
-        type: Sequelize.INTEGER,
-        references : {
-            model: Idea,
-            key: 'IdeaId',
-        }
+    Text: {
+        type: String,
+        required: true
     },
-    Text : {
-        type: Sequelize.STRING
+    Author: {
+        type: String,
+        required: true
     },
-    Author : {
-        type: Sequelize.STRING
+    Likes: {
+        type: Number
     },
-    Likes : {
-        type: Sequelize.INTEGER
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
-}, {
-    schema : 'AppForApps'
-})
+});
 
-db.sync();
+const Comment = mongoose.model("comment", CommentSchema);
 
 module.exports = Comment;
