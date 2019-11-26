@@ -941,7 +941,7 @@ var PostgreSqlService = /** @class */ (function () {
             this.server = "http://localhost:5000";
         }
         else {
-            this.server = "https://app4apps/herokuapp.com";
+            this.server = "https://app4apps.herokuapp.com";
         }
     }
     /**
@@ -960,44 +960,93 @@ var PostgreSqlService = /** @class */ (function () {
         };
     };
     PostgreSqlService.prototype.getHeaders = function () {
-        return new __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["c" /* HttpHeaders */]({ "Content-Type": "application/json", "x-access-token": localStorage.getItem("token") });
+        return new __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["c" /* HttpHeaders */]({
+            "Content-Type": "application/json",
+            "x-access-token": localStorage.getItem("token")
+        });
     };
     PostgreSqlService.prototype.getIdeas = function () {
-        return this.http.get(this.server + "/api/idea", { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("getIdeas", [])));
+        return this.http
+            .get(this.server + "/api/idea", { headers: this.getHeaders() })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("getIdeas", [])));
     };
     PostgreSqlService.prototype.getComments = function (user) {
-        return this.http.get(this.server + "/api/comment", { headers: this.getHeaders(), params: { IdeaId: user } }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("getComments", [])));
+        return this.http
+            .get(this.server + "/api/comment", {
+            headers: this.getHeaders(),
+            params: { IdeaId: user }
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("getComments", [])));
     };
     PostgreSqlService.prototype.addIdea = function (idea) {
-        return this.http.post(this.server + "/api/idea", idea, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("addIdea")));
+        return this.http
+            .post(this.server + "/api/idea", idea, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("addIdea")));
     };
     PostgreSqlService.prototype.addComment = function (comment) {
-        return this.http.post(this.server + "/api/comment", comment, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("addComment")));
+        return this.http
+            .post(this.server + "/api/comment", comment, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("addComment")));
     };
     PostgreSqlService.prototype.deleteComment = function (comment) {
-        return this.http.delete(this.server + "/api/comment?id=" + comment._id, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("commentDelete")));
+        return this.http
+            .delete(this.server + "/api/comment?id=" + comment._id, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("commentDelete")));
     };
     PostgreSqlService.prototype.register = function (username, password, email) {
         var newUser = new __WEBPACK_IMPORTED_MODULE_4__models_User__["a" /* User */](username, password, email);
-        return this.http.post(this.server + "/api/user", newUser).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("register")));
+        return this.http
+            .post(this.server + "/api/user", newUser)
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("register")));
     };
     PostgreSqlService.prototype.login = function (username, password) {
-        return this.http.post(this.server + "/api/user/login", { Username: username, Password: password }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("login")));
+        return this.http
+            .post(this.server + "/api/user/login", {
+            Username: username,
+            Password: password
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("login")));
     };
     PostgreSqlService.prototype.deleteIdea = function (idea) {
-        return this.http.delete(this.server + "/api/idea?id=" + idea._id, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("ideaDelete")));
+        return this.http
+            .delete(this.server + "/api/idea?id=" + idea._id, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("ideaDelete")));
     };
     PostgreSqlService.prototype.deleteAccount = function (userId) {
-        return this.http.delete(this.server + "/api/user?id=" + userId, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("userDelete")));
+        return this.http
+            .delete(this.server + "/api/user?id=" + userId, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("userDelete")));
     };
     PostgreSqlService.prototype.authenticate = function () {
-        return this.http.get(this.server + "/api/user/auth", { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("authenticate")));
+        return this.http
+            .get(this.server + "/api/user/auth", {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("authenticate")));
     };
     PostgreSqlService.prototype.likeIdea = function (idea) {
-        return this.http.post(this.server + "/api/idea/like", idea, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("likeIdea")));
+        return this.http
+            .post(this.server + "/api/idea/like", idea, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("likeIdea")));
     };
     PostgreSqlService.prototype.likeComment = function (comment) {
-        return this.http.post(this.server + "/api/comment/like", comment, { headers: this.getHeaders() }).pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("likeComment")));
+        return this.http
+            .post(this.server + "/api/comment/like", comment, {
+            headers: this.getHeaders()
+        })
+            .pipe(Object(__WEBPACK_IMPORTED_MODULE_1_rxjs_operators__["a" /* catchError */])(this.handleError("likeComment")));
     };
     PostgreSqlService = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["A" /* Injectable */])(),
