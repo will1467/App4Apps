@@ -1,6 +1,11 @@
 <div class="idea-list">
   <app-nav-bar></app-nav-bar>
-  <ng-container *ngFor="let idea of ideas">
-    <app-idea-child *ngIf="idea._id" [idea]="idea"> </app-idea-child>
-  </ng-container>
+  <div *ngIf="ideas.length > 0; else noIdeas">
+    <ng-container *ngFor="let idea of ideas">
+      <app-idea-child *ngIf="idea._id" [idea]="idea"> </app-idea-child>
+    </ng-container>
+  </div>
 </div>
+<ng-template #noIdeas>
+  <div class="d-md-block w-100" style="height:1000px"></div>
+</ng-template>

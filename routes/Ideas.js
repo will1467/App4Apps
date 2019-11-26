@@ -2,35 +2,19 @@ const express = require("express");
 const router = express.Router();
 
 const Idea = require("../models/Idea");
-const Comment = require("../models/Comment");
+const auth = require("../routes/Auth");
 
-const verifyToken = require("./Auth");
-
-router.get("/", async (req, res) => {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.get("/", auth, async (req, res) => {
     try {
         const ideas = await Idea.find();
         res.status(200).send(JSON.stringify(ideas));
     } catch (err) {
-        console.log(err.message);
+        console.error(err.message);
         res.status(200).send({ err: err.message });
     }
 });
 
-router.post("/like", async (req, res, next) => {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.post("/like", auth, async (req, res, next) => {
     try {
         const idea = await Idea.findById(req.body._id);
         if (!idea) {
@@ -39,7 +23,7 @@ router.post("/like", async (req, res, next) => {
 
         let updatedLikeCount = parseInt(req.body.Likes) + 1;
         idea.Likes = updatedLikeCount;
-        idea.save();
+        await idea.save();
         res.status(200).send({ success: true });
     } catch (err) {
         console.error(err.message);
@@ -47,14 +31,7 @@ router.post("/like", async (req, res, next) => {
     }
 });
 
-router.post("/", async (req, res) => {
-    const reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.post("/", auth, async (req, res) => {
     try {
         const newIdea = new Idea({
             Title: req.body.Title,
@@ -71,14 +48,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.delete("/", async (req, res) => {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.delete("/", auth, async (req, res) => {
     try {
         const idea = await Idea.findById(req.query.id);
         //TODO: Cascade delete comments

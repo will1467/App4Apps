@@ -2,34 +2,19 @@ const express = require("express");
 const router = express.Router();
 
 const Comment = require("../models/Comment");
+const auth = require("../routes/Auth");
 
-const verifyToken = require("./Auth");
-
-router.get("/", async (req, res) => {
-    var reqToken = req.get("x-access-token");
+router.get("/", auth, async (req, res) => {
     try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
-    try {
-        const comments = Comment.find({ Idea: req.query.IdeaId });
-        res.status(200).send(JSON.stringify(comments));
+        const comments = await Comment.find({ Idea: req.query.IdeaId });
+        res.status(200).send(comments);
     } catch (err) {
         console.error(err.message);
         res.status(200).send({ err: err.message });
     }
 });
 
-router.post("/", async (req, res) => {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.post("/", auth, async (req, res) => {
     try {
         const newComment = new Comment({
             Text: req.body.Text,
@@ -38,60 +23,42 @@ router.post("/", async (req, res) => {
             Likes: 0
         });
         await newComment.save();
+        res.status(200).send({ success: true });
     } catch (err) {
         console.error(err.message);
         res.status(200).send({ err: err.message });
     }
 });
 
-router.delete("/", async function(req, res) {
-    var reqToken = req.get("x-access-token");
+router.delete("/", auth, async function(req, res) {
     try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        res.sendStatus(403);
-        //return next to stop execution (prevents "set headers after they are sent" error)
-        return;
-    }
-
-    Comment.find({ where: { CommentId: req.query.id } }).then(function(result) {
-        if (result) {
-            result.destroy({ force: true });
-            res.status(200).send(true);
-        } else {
-            res.status(200).send(false);
-        }
-    });
-});
-
-router.post("/like", async function(req, res) {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        res.sendStatus(403);
-        //return next to stop execution (prevents "set headers after they are sent" error)
-        return;
-    }
-
-    var updatedLikeCount = parseInt(req.body.Likes) + 1;
-    Comment.find({ where: { CommentId: parseInt(req.body.CommentId) } }).then(function(result) {
-        if (result) {
-            result
-                .update({
-                    Likes: updatedLikeCount
-                })
-                .then(success => {
-                    if (success) {
-                        res.status(200).send({ success: true });
-                    } else {
-                        res.status(200).send({ err: "Database could not be updated" });
-                    }
-                });
-        } else {
+        const comment = await Comment.findById(req.query.id);
+        if (!comment) {
             res.status(200).send({ err: "Comment not found" });
         }
-    });
+        await comment.remove();
+        res.status(200).send(true);
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
+    }
+});
+
+router.post("/like", auth, async (req, res) => {
+    try {
+        let comment = await Comment.findById(req.body._id);
+        if (!comment) {
+            return res.status(200).send({ err: "Comment not found" });
+        }
+
+        let updatedLikeCount = parseInt(req.body.Likes) + 1;
+        comment.Likes = updatedLikeCount;
+        await comment.save();
+        res.status(200).send({ success: true });
+    } catch (err) {
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
+    }
 });
 
 module.exports = router;

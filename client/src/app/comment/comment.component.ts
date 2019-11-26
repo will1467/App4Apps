@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from "@angular/core";
 import { PostgreSqlService } from "../services/postgre-sql.service";
 import { Comment } from "../models/Comment";
 import { Router } from "@angular/router";
+import { NotifierService } from "angular-notifier";
 
 @Component({
   selector: "app-comment",
@@ -12,17 +13,16 @@ export class CommentComponent implements OnInit {
   @Input() comment: Comment;
   Liked = false;
 
-  constructor(private postgreSqlService: PostgreSqlService) {}
+  constructor(
+    private postgreSqlService: PostgreSqlService,
+    private notifier: NotifierService
+  ) {}
 
   ngOnInit() {}
 
   checkCommentAuthor() {
     var user = localStorage.getItem("user");
-    if (this.comment.Author === user) {
-      return true;
-    } else {
-      return false;
-    }
+    return this.comment.Author === user ? true : false;
   }
 
   onDeleteCommentClick() {
@@ -30,7 +30,7 @@ export class CommentComponent implements OnInit {
       if (response) {
         this.comment._id = null;
       } else {
-        console.log("Comment deletion failed");
+        this.notifier.notify("error", response["err"]);
       }
     });
   }
@@ -38,8 +38,9 @@ export class CommentComponent implements OnInit {
   addLike() {
     if (!this.Liked) {
       this.postgreSqlService.likeComment(this.comment).subscribe(response => {
+        debugger;
         if (response["err"]) {
-          console.log(response["err"]);
+          this.notifier.notify("error", response["err"]);
         } else {
           this.comment.Likes += <any>1;
           this.Liked = true;

@@ -3,6 +3,7 @@ import { PostgreSqlService } from "../services/postgre-sql.service";
 import { Idea } from "../models/Idea";
 import { Comment } from "../models/Comment";
 import { Router } from "@angular/router";
+import { NotifierService } from "angular-notifier";
 
 @Component({
   selector: "app-idea-child",
@@ -17,15 +18,22 @@ export class IdeaChildComponent implements OnInit {
   comments = [];
   commentText = null;
 
-  constructor(private postgreSqlService: PostgreSqlService, private router: Router) {}
+  constructor(
+    private postgreSqlService: PostgreSqlService,
+    private router: Router,
+    private notifier: NotifierService
+  ) {}
 
   ngOnInit() {
     this.Liked = false;
+    this.commentText = null;
     this.getComments();
   }
 
   getComments() {
-    this.postgreSqlService.getComments(this.idea._id).subscribe(comments => (this.comments = comments));
+    this.postgreSqlService
+      .getComments(this.idea._id)
+      .subscribe(comments => (this.comments = comments));
   }
 
   onCommentKeyPress(event: any) {
@@ -35,10 +43,14 @@ export class IdeaChildComponent implements OnInit {
   }
 
   addComment() {
-    var newComment = new Comment(this.commentText, localStorage.getItem("user"), this.idea._id);
+    var newComment = new Comment(
+      this.commentText,
+      localStorage.getItem("user"),
+      this.idea._id
+    );
     this.postgreSqlService.addComment(newComment).subscribe(response => {
       if (response["err"]) {
-        console.log(response["err"]);
+        this.notifier.notify("error", response["err"]);
       } else {
         this.commentText = null;
         this.getComments();
@@ -56,7 +68,7 @@ export class IdeaChildComponent implements OnInit {
       if (success) {
         this.idea._id = null;
       } else {
-        console.log("Deletion failed");
+        this.notifier.notify("error", "Deletion of idea failed");
       }
     });
   }
@@ -65,7 +77,7 @@ export class IdeaChildComponent implements OnInit {
     if (!this.Liked) {
       this.postgreSqlService.likeIdea(this.idea).subscribe(response => {
         if (response["err"]) {
-          console.log(response["err"]);
+          this.notifier.notify("error", response["err"]);
         } else {
           this.idea.Likes += <any>1;
           this.Liked = true;

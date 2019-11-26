@@ -1,6 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { PostgreSqlService } from "../services/postgre-sql.service";
 import { Router } from "@angular/router";
+import { NotifierService } from "angular-notifier";
 
 @Component({
   selector: "app-idea-parent",
@@ -11,26 +12,13 @@ export class IdeaParentComponent implements OnInit {
   ideas = null;
   signedInUser = localStorage.getItem("user");
 
-  constructor(private postgreSqlService: PostgreSqlService, private router: Router) {}
+  constructor(
+    private postgreSqlService: PostgreSqlService,
+    private router: Router,
+    private notifier: NotifierService
+  ) {}
 
   ngOnInit() {
     this.postgreSqlService.getIdeas().subscribe(ideas => (this.ideas = ideas));
-  }
-
-  onLogout() {
-    localStorage.setItem("token", null);
-    localStorage.setItem("userid", null);
-    localStorage.setItem("user", null);
-    this.router.navigate(["/"]);
-  }
-
-  onAccountDelete() {
-    this.postgreSqlService.deleteAccount(localStorage.getItem("userid")).subscribe(response => {
-      if (response) {
-        this.onLogout();
-      } else {
-        console.log("An unexpected error occured : Deletion failed");
-      }
-    });
   }
 }

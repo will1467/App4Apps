@@ -1,16 +1,17 @@
-const jwt = require("jsonwebtoken");
 const config = require("config");
+const jwt = require("jsonwebtoken");
 
-const verifyToken = token => {
-    return new Promise((fnResolve, fnReject) => {
-        jwt.verify(token, config.get("jwtSecret"), function(err, decoded) {
-            if (err) {
-                fnReject(err);
-            } else {
-                fnResolve(token);
-            }
-        });
-    });
+module.exports = (req, res, next) => {
+    const token = req.get("x-access-token");
+    if (!token) {
+        return res.status(401).send(false);
+    }
+
+    try {
+        const decoded = jwt.verify(token, config.get("jwtSecret"));
+        req.user = decoded.user;
+        next();
+    } catch (err) {
+        res.status(401).send(false);
+    }
 };
-
-module.exports = verifyToken;

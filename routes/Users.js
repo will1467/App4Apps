@@ -2,12 +2,11 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const bCrypt = require("bcrypt");
+const User = require("../models/User");
+const auth = require("../routes/Auth");
 const config = require("config");
 
-const User = require("../models/User");
-
 const _HASH = 8;
-const verifyToken = require("./Auth");
 
 router.post("/", async (req, res) => {
     try {
@@ -27,7 +26,7 @@ router.post("/", async (req, res) => {
             expiresIn: 86400
         });
 
-        res.status(200).send({ auth: true, token: token, user: user.UserName, userid: user.UserId });
+        res.status(200).send({ auth: true, token: token, user: newUser.UserName });
     } catch (err) {
         console.error(err.message);
         res.status(200).send({ err: err.message });
@@ -56,38 +55,22 @@ router.post("/login", async (req, res) => {
     }
 });
 
-router.get("/auth", async function(req, res, next) {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-        res.status(200).send(true);
-    } catch (err) {
-        res.sendStatus(403);
-        //return next to stop execution (prevents "set headers after they are sent" error)
-        return;
-    }
+router.get("/auth", async (req, res) => {
+    res.status(200).send(true);
 });
 
-router.delete("/", async (req, res) => {
-    var reqToken = req.get("x-access-token");
-    try {
-        const authToken = await verifyToken(reqToken);
-    } catch (err) {
-        return res.sendStatus(403);
-    }
-
+router.delete("/", auth, async (req, res) => {
     try {
         const user = await User.findById(req.query.id);
         if (!user) {
-            return res.status(200).send(false);
+            return res.status(200).send({ err: "User not found" });
         }
 
         await user.remove();
         res.status(200).send(true);
     } catch (err) {
-        console.console.error();
-        err.message;
-        res.status(200).send({ err: err });
+        console.error(err.message);
+        res.status(200).send({ err: err.message });
     }
 });
 
