@@ -32,7 +32,7 @@ if (process.env.NODE_ENV === "production") {
     app.use(cors(corsOptions));
 }
 
-app.listen(config.get("port"), () => {
+app.listen(process.env.PORT, () => {
     console.log("server started!");
     connect();
 });
